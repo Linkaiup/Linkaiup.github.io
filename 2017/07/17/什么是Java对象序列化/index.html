@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<!--[if lte IE 8 ]>
+<html class="ie" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+<![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!-->
+<!--
+***************  *      *     *
+      8          *    *       *
+      8          *  *         *
+      8          **           *
+      8          *  *         *
+      8          *    *       *
+      8          *      *     *
+      8          *        *   ***********    -----Theme By Kieran(http://go.kieran.top)
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+<!--<![endif]-->
+
+<head>
+  <title>什么是Java对象序列化 | HeyLin</title>
+  <!-- Meta data -->
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content="HeyLin">
+    <meta name="author" content="KaiLin">
+    <meta name="description" content="Stronger yourself with technology" />
+    <meta name="keywords" content="" />
+
+    <!-- Favicon, (keep icon in root folder) -->
+    <link rel="Shortcut Icon" href="/img/favicon.ico" type="image/ico">
+
+    <link rel="alternate" href="/atom.xml" title="HeyLin" type="application/atom+xml">
+    <link rel="stylesheet" href="/css/all.css" media="screen" type="text/css">
+    
+    <link rel="stylesheet" href="/highlightjs/vs.css" type="text/css">
+    
+
+    <!--[if IE 8]>
+    <link rel="stylesheet" type="text/css" href="/css/ie8.css" />
+    <![endif]-->
+
+    <!-- jQuery | Load our jQuery, with an alternative source fallback to a local version if request is unavailable -->
+    <script src="/js/jquery-1.11.1.min.js"></script>
+    <script>window.jQuery || document.write('<script src="js/jquery-1.11.1.min.js"><\/script>')</script>
+
+    <!-- Load these in the <head> for quicker IE8+ load times -->
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="/js/html5shiv.min.js"></script>
+    <script src="/js/respond.min.js"></script>
+    <![endif]-->
+
+  
+  
+  
+
+  <style>.col-md-8.col-md-offset-2.opening-statement img{display:none;}</style>
+</head>
+
+<!--
+<body class="post-template">
+-->
+<body id="index" class="lightnav animsition">
+
+      <!-- ============================ Off-canvas navigation =========================== -->
+
+    <div class="sb-slidebar sb-right sb-style-overlay sb-momentum-scrolling">
+        <div class="sb-close" aria-label="Close Menu" aria-hidden="true">
+            <img src="/img/close.png" alt="Close"/>
+        </div>
+        <!-- Lists in Slidebars -->
+        <ul class="sb-menu">
+            <li><a href="/" class="animsition-link" title="Home">Home</a></li>
+            <li><a href="www.google.com" >archives</a></li>
+            <!-- Dropdown Menu -->
+			 
+            <li>
+                <a class="sb-toggle-submenu">Works<span class="sb-caret"></span></a>
+                <ul class="sb-submenu">
+                    
+                        <li><a href="/" target="_BLANK" class="animsition-link">AAA</a></li>
+                    
+                        <li><a href="/atom.xml" target="_BLANK" class="animsition-link">BBB</a></li>
+                    
+                </ul>
+            </li>
+            
+            
+            
+            <li>
+                <a class="sb-toggle-submenu">Links<span class="sb-caret"></span></a>
+                <ul class="sb-submenu">
+                    
+                    <li><a href="http://Linkaiup.github.io" class="animsition-link">LinKai</a></li>
+                    
+                    <li><a href="http://domain.com/" class="animsition-link">Name</a></li>
+                    
+                </ul>
+            </li>
+            
+        </ul>
+        <!-- Lists in Slidebars -->
+        <ul class="sb-menu secondary">
+            <li><a href="/about.html" class="animsition-link" title="about">About</a></li>
+            <li><a href="/atom.xml" class="animsition-link" title="rss">RSS</a></li>
+        </ul>
+    </div>
+    
+    <!-- ============================ END Off-canvas navigation =========================== -->
+
+    <!-- ============================ #sb-site Main Page Wrapper =========================== -->
+
+    <div id="sb-site">
+        <!-- #sb-site - All page content should be contained within this id, except the off-canvas navigation itself -->
+
+        <!-- ============================ Header & Logo bar =========================== -->
+
+        <div id="navigation" class="navbar navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <!-- Nav logo -->
+                    <div class="logo">
+                        <a href="/" title="Logo" class="animsition-link">
+                         <img src="/img/logo.png" alt="Logo" width="35px;"/> 
+                        </a>
+                    </div>
+                    <!-- // Nav logo -->
+                    <!-- Info-bar -->
+                    <nav>
+                        <ul class="nav">
+                            <li><a href="/" class="animsition-link">HeyLin</a></li>
+                            <li class="nolink"><span>Always </span>Creative.</li>
+                            
+                            <li><a href="https://github.com/" title="Github" target="_blank"><i class="icon-github"></i></a></li>
+                            
+                            
+                            <li><a href="https://twitter.com/" title="Twitter" target="_blank"><i class="icon-twitter"></i></a></li>
+                            
+                            
+                            <li><a href="https://www.facebook.com/" title="Facebook" target="_blank"><i class="icon-facebook"></i></a></li>
+                            
+                            
+                            <li><a href="https://google.com/" title="Google-Plus" target="_blank"><i class="icon-google-plus"></i></a></li>
+                            
+                            
+                            <li><a href="http://weibo.com/" title="Sina-Weibo" target="_blank"><i class="icon-sina-weibo"></i></a></li>
+                            
+                            <li class="nolink"><span>Welcome!</span></li>
+                        </ul>
+                    </nav>
+                    <!--// Info-bar -->
+                </div>
+                <!-- // .container -->
+                <div class="learnmore sb-toggle-right">More</div>
+                <button type="button" class="navbar-toggle menu-icon sb-toggle-right" title="More">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar before"></span>
+                <span class="icon-bar main"></span>
+                <span class="icon-bar after"></span>
+                </button>
+            </div>
+            <!-- // .navbar-inner -->
+        </div>
+
+        <!-- ============================ Header & Logo bar =========================== -->
+
+
+      
+<section id="intro">
+    <div class="container">
+        <div class="row col-md-offset-2">
+            <div class="col-md-8">
+    			<span class="post-meta">
+      <time datetime="2017-07-17T01:10:50.000Z" itemprop="datePublished">
+          2017-07-17
+      </time>
+    
+</span>
+                <h1>什么是Java对象序列化</h1>
+            </div>
+        </div>
+        <div class="col-md-8 col-md-offset-2">
+      		<p>当两个进程在进行远程通信时，彼此可以发送各种类型的数据。数据以二进制序列的形式在网络上传送。发送方需要把这个Java对象转换为字节序列，才能在网络上传送；接收方则需要把字节序列再恢复为Java对象，才能接收到信息。那么，如何把Java对象转换为字节序列呢？<br><a id="more"></a></p>
+<hr>
+<h1 id="什么是Java对象序列化"><a href="#什么是Java对象序列化" class="headerlink" title="什么是Java对象序列化"></a>什么是Java对象序列化</h1><hr>
+<h2 id="1、含义"><a href="#1、含义" class="headerlink" title="1、含义"></a>1、含义</h2><p>　　当两个进程在进行远程通信时，彼此可以发送各种类型的数据。数据以二进制序列的形式在网络上传送。发送方需要把这个Java对象转换为字节序列，才能在网络上传送；接收方则需要把字节序列再恢复为Java对象，才能接收到信息。</p>
+<h2 id="2、条件"><a href="#2、条件" class="headerlink" title="2、条件"></a>2、条件</h2><p>　　若需要让某个对象支持序列化机制，则必须让它的类可序列化。必须实现如下两接口之一<br>　　1）、Seriallizable(常用)<br>　　2）、Externalizable<br>　　<br>　　建议：程序创建每个JavaBean类都实现Serializable。</p>
+<h2 id="3、作用"><a href="#3、作用" class="headerlink" title="3、作用"></a>3、作用</h2><p>　　把内存中的Java对象转换成平台无关的二进制流，从而允许把这种二进制流持久地保存在磁盘上，有网络时就可以将二进制流传输到另一个网络节点</p>
+<h2 id="4、使用"><a href="#4、使用" class="headerlink" title="4、使用"></a>4、使用</h2><p>　　废话少说，下面我们来看看怎么使用序列化</p>
+<p>　　1）、使用对象流实现序列化<br>　　　使用Serializable来实现序列化非常简单，主要让目标类实现Serializable标记接口即可，无须实现任何方法。程序可通过如下两步骤序列化一个对象：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//（1）、创建个输出流</span></div><div class="line">ObjectOutputStream oos = <span class="keyword">new</span> ObjectOutputStream( <span class="keyword">new</span> FileOutputStream(<span class="string">"object.java"</span>));</div><div class="line"><span class="comment">//（2）、调用输出流的writeObject()方法输出可序列化对象</span></div><div class="line">oos.writeObject(per);</div></pre></td></tr></table></figure></p>
+<p>　　下面来看实际中的应用：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//先创建一个Person类</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span></div><div class="line">		<span class="keyword">implements</span> <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span></div><div class="line">&#123;</div><div class="line">	<span class="keyword">private</span> String name;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> age;</div><div class="line">	<span class="comment">//有参构造器</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="title">Person</span><span class="params">(String name,<span class="keyword">int</span> age)</span></span></div><div class="line">	&#123;</div><div class="line">		System.out.println(<span class="string">"有参数的构造器"</span>);</div><div class="line">		<span class="keyword">this</span>.name=name;</div><div class="line">		<span class="keyword">this</span>.age=age;</div><div class="line">	&#125;</div><div class="line">	<span class="comment">//name和age的getter和setter方法</span></div><div class="line">	...</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//将一个Person对象写入磁盘文件，即序列化</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WriteObject</span></span></div><div class="line">&#123;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span></div><div class="line">	&#123;</div><div class="line">		<span class="keyword">try</span>(<span class="comment">//在退出虚拟机时就可以清掉这些打开的资源了</span></div><div class="line">			ObjectOutputStream oos = <span class="keyword">new</span> ObjectOutputStream(</div><div class="line">							<span class="keyword">new</span> FileOutputStream(<span class="string">"object.txt"</span>)))</div><div class="line">		&#123;</div><div class="line">			Person per = <span class="keyword">new</span> Person(<span class="string">"linkai"</span>,<span class="number">100</span>);</div><div class="line">			<span class="comment">//将Person对象写入输出流</span></div><div class="line">			oos.writeObject(per);</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">catch</span>(IOException ex)</div><div class="line">		&#123;</div><div class="line">			ex.printStackTrace();</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;	</div><div class="line"></div><div class="line"><span class="comment">//从磁盘文件读写一个Person对象，即反序列化</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ReadObject</span></span></div><div class="line">&#123;</div><div class="line">	 <span class="keyword">try</span>(<span class="comment">//同上，称为自动关闭资源</span></div><div class="line">		 <span class="comment">//创建一个输出流</span></div><div class="line">		ObjectInputStream ois = <span class="keyword">new</span> ObjectInputStream(<span class="keyword">new</span> FileInputStream(<span class="string">"object.txt"</span>)))</div><div class="line">		&#123;</div><div class="line">			Person p = (Person)ois.readObject();<span class="comment">//从磁盘文件反序列化出一对象，强转为Person类型</span></div><div class="line">			<span class="comment">//当反序列化找不到对应的Java类时将会抛出ClassNotFoundException异常</span></div><div class="line">			System.out.println(<span class="string">"名称为"</span>+p.getname()+<span class="string">"年龄为："</span>+p.getage());</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">catch</span>(Exception ex)</div><div class="line">		&#123;</div><div class="line">			ex.printStackTrace();</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>　　以上就是序列化和反序列化的基础实现。还有一点需要指出：Person类构造器中的有参构造器中有一句普通的打印语句，但是反序列化时并没有该语句打印输出，这说明了什么呢？<strong>说明反序列化机制无须通过构造器来初始化Java对象</strong><br>　　另外，若使用序列化机制向文件中写入了多个Java对象，使用反序列化机制恢复对象时必须按实际写入顺序读取。<br>　　<br>　　2）、对象引用的序列化<br>　　　　　<br>　　　前面介绍的Person类的两个对象分别是String和int类型，如果某个成员变量是引用类型，则该引用类型有没有什么要求呢？答案是肯定的，该引用类型也必须是可序列化的。否则，拥有该类型成员变量的类也是不可序列化的。<br>　　　<br>　Java为了保持Java序列化机制的初衷——避免重复序列化相同的对象，采用了一种特殊的算法，下面我们来看看它的内容：</p>
+<ul>
+<li>所有保存到磁盘中的对象都有一个序列化编号</li>
+<li>当程序试图序列化一个对象时，先检查该对象是否已被序列化，如果是（在本次虚拟机中），则直接输出一个序列化编号</li>
+</ul>
+<p>　下面我们来看看对象引用序列化的实际用法<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//Person类和上面相同</span></div><div class="line">...</div><div class="line"></div><div class="line"><span class="comment">//Boss类</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Boss</span></span></div><div class="line">	<span class="keyword">implements</span> <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span></div><div class="line">&#123;</div><div class="line">	<span class="keyword">private</span> String name;</div><div class="line">	<span class="keyword">private</span> Person worker;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="title">Boss</span><span class="params">(String name , Person worker)</span></span></div><div class="line">	&#123;</div><div class="line">		<span class="keyword">this</span>.name=name;</div><div class="line">		<span class="keyword">this</span>.worker=worker;</div><div class="line">	&#125;</div><div class="line">	<span class="comment">//省略name和worker的getter,setter</span></div><div class="line">	...</div><div class="line"></div><div class="line"><span class="comment">//序列化</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WriterTeacher</span></span></div><div class="line">&#123;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span></div><div class="line">	&#123;</div><div class="line">		<span class="keyword">try</span>(</div><div class="line">			ObjectOutputStream oos =<span class="keyword">new</span> ObjectOutputStream(</div><div class="line">					<span class="keyword">new</span> FileOutputStream(<span class="string">"file.txt"</span>)))</div><div class="line">		&#123;</div><div class="line">			Person per =<span class="keyword">new</span> Person(<span class="string">"linkai"</span>,<span class="number">100</span>);</div><div class="line">			Boss b1=<span class="keyword">new</span> Boss(<span class="string">"lincoln"</span>,per);</div><div class="line">			Boss b2=<span class="keyword">new</span> Boss(<span class="string">"kai"</span>,per);</div><div class="line"></div><div class="line">			oos.writeObject(b1);</div><div class="line">			oos.writeObject(b2);</div><div class="line">			oos.writeObject(per);</div><div class="line">			oos.writeObject(b2);<span class="comment">//4次调用了writeObject()方法来输出对象，实际只序列化了三个对象</span></div><div class="line">								<span class="comment">//序列的两个Boss对象的worker引用实际是同一个person对象</span></div><div class="line">		&#125;</div><div class="line">		<span class="keyword">catch</span>(IOException ex)</div><div class="line">		&#123;</div><div class="line">			ex.printStackTrace();</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//下面是反序列化操作</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ReadTeacher</span></span></div><div class="line">&#123;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span></div><div class="line">	&#123;</div><div class="line">		<span class="keyword">try</span>(</div><div class="line">				ObjectInputStrame ois = <span class="keyword">new</span> ObjectInputStream(</div><div class="line">					<span class="keyword">new</span> FileInputStream(<span class="string">"file.txt"</span>)))</div><div class="line">		&#123;</div><div class="line">			<span class="comment">//必须按顺序读取文件中对象</span></div><div class="line">			Boss b1=(Boss)ois.readObject();</div><div class="line">			Boss b2=(Boss)ois.readObject();</div><div class="line">			Person per=(Person)ois.readObject();</div><div class="line">			Boss b3=(Boss)ois.readObject();</div><div class="line">			</div><div class="line">			<span class="comment">//下列比较可以得出Java的序列化算法机制</span></div><div class="line">			System.out.pintln(<span class="string">"b1的worker引用与b2的worker引用是否相同"</span>+(b1.getWorker()==b2.getWorker()));</div><div class="line">			<span class="comment">//输出true</span></div><div class="line">			System.out.pintln(<span class="string">"b2与b3是否是同一个对象"</span>+(b2==b3));</div><div class="line">			<span class="comment">//输出true</span></div><div class="line">			System.out.pintln(<span class="string">"b1的worker引用与per是否相同"</span>+(b1.getWorker()==per));</div><div class="line">			<span class="comment">//输出true</span></div><div class="line">		&#125;</div><div class="line">		<span class="keyword">catch</span>(Exception ex)</div><div class="line">		&#123;</div><div class="line">			ex.printStackTrace();</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>　　另外，还需要注意一点。当使用序列化机制序列化可变对象时一定要注意，只有第一次调用writeObject()方法来输出对象时才会将对象转换成字节序列，并写入到ObjectOutputStream；在后面程序中，即使该对象的实例变量发生改变，再次调用writeObject（）方法输出该对象时，改变后的实例变量也不会被输出。</p>
+<h2 id="5、关于自定义序列化"><a href="#5、关于自定义序列化" class="headerlink" title="5、关于自定义序列化"></a>5、关于自定义序列化</h2><p>　　在一些特殊场景下，如果一个类中包含某些实例变量敏感信息，如银行账户信息等，这时不希望将该实例变量值进行序列化；或者某个实例变量的类型是不可序列化的，因此不希望对该实例变量进行递归序列化，以免引发java.io.NotSerializableException异常。<br>　　<br>　　自定义序列化大体分为两种：<br>　　1）、使用transient（只能修饰实例变量）关键字修饰<br>　　　　如前面所说，但某些实例变量不需要序列化时可以使用transient修饰，则可以指定序列化时无需理会该变量。反序列化时该值则将会是0。<br>　　2）、让程序控制如何实例化各实例变量，即特殊处理<br>　　　　需要特殊处理的类应该提供如下特殊方法</p>
+<ul>
+<li>private void writeObject(java.io.ObjectOutputStream out)throws IOException;</li>
+<li>private void readObject(java.io.ObjectOutputStream in)throws IOException,ClassNotFoundException;</li>
+<li>private void readObjectNoData()throws ObjectStreamException;<br>  以下是代码实例：<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//Person类和上面一样</span></div><div class="line">...</div><div class="line"></div><div class="line"><span class="comment">//writeObject实例</span></div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">writeObject</span><span class="params">(java.io.ObjectOutputStream out)</span><span class="keyword">throws</span> IOException</span></div><div class="line">&#123;</div><div class="line">	<span class="comment">//将name实例变量值反转后写入二进制流</span></div><div class="line">	out.writeObject(<span class="keyword">new</span> StringBuffer(name).reverse());</div><div class="line">	out.writeInt(age);</div><div class="line">&#125;</div><div class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">readObject</span><span class="params">(java.io.ObjectOutputStream in)</span><span class="keyword">throws</span> IOException,ClassNotFoundException</span></div><div class="line">&#123;</div><div class="line">		<span class="comment">//相反的操作反序列化</span></div><div class="line">		<span class="keyword">this</span>.name=((StringBuffer)in.readObject()).reverse().toString();</div><div class="line">		<span class="comment">//应该与writeObject方法中存储实例变量的顺序一致</span></div><div class="line">	<span class="keyword">this</span>.age=in.readInt();</div><div class="line">	</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>　　上面程序的特殊之处就在于，序列化后的对象流，即使有黑客截获到Person对象流，他看到的name也是加密（反转）后的name值。这样就提高了序列化的安全性。<br>　　另外，还有一种更彻底的自定义机制，甚至可以在序列化对象时将该对象替换成其他对象。代码如下所示：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span>...</span></div><div class="line">&#123;</div><div class="line"><span class="comment">//Person类与上面相同</span></div><div class="line">...</div><div class="line"></div><div class="line">	<span class="comment">//重写writeObject方法，程序在序列化之前会先调用该方法</span></div><div class="line">	<span class="function"><span class="keyword">private</span> Object <span class="title">writeReplace</span><span class="params">()</span> <span class="keyword">throws</span> ObjectStreamException</span></div><div class="line">	&#123;</div><div class="line">		ArrayList&lt;Object&gt; list=<span class="keyword">new</span> ArrayList&lt;Object&gt;();</div><div class="line">		list.add(name);</div><div class="line">		list.add(age);</div><div class="line">		<span class="keyword">return</span> list;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>　　Java的序列化机制保证在序列化某个对象之前，先调用该对象的writeReplace()方法，如果返回另一个Java对象，则系统转为序列化另一个对象。就像上面，表面看是Person对象，实际上是实例化ArrayList。<br>　　那么这个时候我们会想，咦，不对啊！只有list被序列化，而list中的对象没有被序列化，为什么反序列化后还能够输出list中的元素呢？<br>　　其实，答案都在ArrayList类的源码里。<br>　　在解析ArrayList类的源码之前，我们要知道这个原则：</p>
+<blockquote>
+<p>　　在序列化过程中，如果被序列化的类中定义了writeObject 和 readObject 方法，虚拟机会试图调用对象类里的 writeObject 和 readObject 方法，进行用户自定义的序列化和反序列化。</p>
+</blockquote>
+<p>　　如果没有这样的方法，则默认调用是 ObjectOutputStream 的 defaultWriteObject 方法以及 ObjectInputStream 的 defaultReadObject 方法。<br>　　<br>　　用户自定义的 writeObject 和 readObject 方法可以允许用户控制序列化的过程，比如可以在序列化的过程中动态改变序列化的数值。</p>
+<p>　　知道了这个原则后我们再来看一下ArrayList类中readObject方法的源码：
+　　</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">readObject</span><span class="params">(java.io.ObjectInputStream s)</span></span></div><div class="line">        <span class="keyword">throws</span> java.io.IOException, ClassNotFoundException &#123;</div><div class="line">        elementData = EMPTY_ELEMENTDATA;</div><div class="line"></div><div class="line">        <span class="comment">// Read in size, and any hidden stuff</span></div><div class="line">        s.defaultReadObject();</div><div class="line"></div><div class="line">        <span class="comment">// Read in capacity</span></div><div class="line">        s.readInt(); <span class="comment">// ignored</span></div><div class="line"></div><div class="line">        <span class="keyword">if</span> (size &gt; <span class="number">0</span>) &#123;</div><div class="line">            <span class="comment">// be like clone(), allocate array based upon size not capacity</span></div><div class="line">            ensureCapacityInternal(size);</div><div class="line"></div><div class="line">            Object[] a = elementData;</div><div class="line">            <span class="comment">// Read in all elements in the proper order.</span></div><div class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;size; i++) &#123;</div><div class="line">                a[i] = s.readObject();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>　　我们再来看一下ArrayList类中writeObject方法的源码：
+　　</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">writeObject</span><span class="params">(java.io.ObjectOutputStream s)</span></span></div><div class="line">        <span class="keyword">throws</span> java.io.IOException&#123;</div><div class="line">        <span class="comment">// Write out element count, and any hidden stuff</span></div><div class="line">        <span class="keyword">int</span> expectedModCount = modCount;</div><div class="line">        s.defaultWriteObject();</div><div class="line"></div><div class="line">        <span class="comment">// Write out size as capacity for behavioural compatibility with clone()</span></div><div class="line">        s.writeInt(size);</div><div class="line"></div><div class="line">        <span class="comment">// Write out all elements in the proper order.</span></div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;size; i++) &#123;</div><div class="line">            s.writeObject(elementData[i]);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="keyword">if</span> (modCount != expectedModCount) &#123;</div><div class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> ConcurrentModificationException();</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>　　从上面的代码中我们可以看出什么呢？</p>
+<blockquote>
+<p>　　其实ArrayList实际上是动态数组，每次在放满以后自动增长设定的长度值，如果数组自动增长长度设为100，而实际只放了一个元素，那就会序列化99个null元素。为了保证在序列化的时候不会将这么多null同时进行序列化，ArrayList把元素数组设置为transient。<br>　　为了防止一个包含大量空对象的数组被序列化，为了优化存储，所以，ArrayList使用transient来声明elementData。 但是，作为一个集合，在序列化过程中还必须保证其中的元素可以被持久化下来，所以，通过重写writeObject 和 readObject方法的方式把其中的元素保留下来。</p>
+<p>　　writeObject方法把elementData数组中的元素遍历的保存到输出流（ObjectOutputStream）。</p>
+</blockquote>
+<p>　　readObject方法从输入流（ObjectInputStream）中读出对象并保存赋值到elementData数组中。</p>
+<p>　　所以，即使只有list被序列化，而list中的对象没有被序列化，反序列化后还是能够输出list中的元素的！秘密就在ArrayList类的writeObject和readObject的方法中！<br>　　<br>　　我们也从中学习到了，通过在被序列化的类中增加writeObject 和 readObject方法，也是自定义序列化的一种方法。</p>
+<p>　　至此，Java对象序列化的知识就介绍完毕了。以后就记得好好运用对象序列化噢~<br>　　<br>　　参考致谢：<a href="http://www.hollischuang.com/archives/1140" target="_blank" rel="external">http://www.hollischuang.com/archives/1140</a></p>
+<p style="center"><br> <span id="busuanzi_container_page_pv"><br>  本文总阅读量<span id="busuanzi_value_page_pv"></span>次<br></span><br></p>
+
+            <div class="clearfix"></div>
+            <hr class="nogutter">
+        </div>
+        <nav class="pagination" role="pagination">
+    
+    
+    <a class="pull-right" href="/2017/07/12/如何正确的创建和销毁Java对象/">
+        如何正确创建和销毁Java对象 →
+    </a>
+    
+</nav>
+
+        <div class="duoshuo">
+
+
+</div>
+    </div>
+</section>
+
+
+      
+<!-- ============================ Footer =========================== -->
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+<footer>
+    <div class="container">
+            <div class="copy">
+                <p>
+                    &copy; 2017<script>new Date().getFullYear()>2010&&document.write("-"+new Date().getFullYear());</script>, Content By KaiLin. All Rights Reserved.
+                </p>
+          		<span id="busuanzi_container_site_pv" style='display:none'>
+                    本站总访问量<span id="busuanzi_value_site_pv"></span>次
+                </span>
+            </div>
+            <div class="social">
+                <ul>
+                    
+                    <li><a href="https://github.com/" title="Github" target="_blank"><i class="icon-github"></i></a>&nbsp;</li>
+                    
+                    
+                    <li><a href="https://twitter.com/" title="Twitter" target="_blank"><i class="icon-twitter"></i></a>&nbsp;</li>
+                    
+                    
+                    <li><a href="https://www.facebook.com/" title="Facebook" target="_blank"><i class="icon-facebook"></i></a>&nbsp;</li>
+                    
+                    
+                    <li><a href="https://google.com/" title="Google-Plus" target="_blank"><i class="icon-google-plus"></i></a>&nbsp;</li>
+                    
+                    
+                    <li><a href="http://weibo.com/" title="Sina-Weibo" target="_blank"><i class="icon-sina-weibo"></i></a>&nbsp;</li>
+                    
+                </ul>
+            </div>
+            <div class="clearfix"> </div>
+        </div>
+</footer>
+
+<!-- ============================ END Footer =========================== -->
+      <!-- Load our scripts -->
+<!-- Resizable 'on-demand' full-height hero -->
+<script type="text/javascript">
+    var resizeHero = function () {
+        var hero = $(".cover,.heightblock"),
+            window1 = $(window);
+        hero.css({
+            "height": window1.height()
+        });
+    };
+
+    resizeHero();
+
+    $(window).resize(function () {
+        resizeHero();
+    });
+</script>
+<script src="/js/plugins.min.js"></script><!-- Bootstrap core and concatenated plugins always load here -->
+<script src="/js/jquery.flexslider-min.js"></script><!-- Flexslider plugin -->
+<script src="/js/scripts.js"></script><!-- Theme scripts -->
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$('#intro').find('img').each(function(){
+  var alt = this.alt;
+
+  if (alt){
+    $(this).after('<span class="caption" style="display:none">' + alt + '</span>');
+  }
+
+  $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox" rel="gallery" />');
+});
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+<!-- Initiate flexslider plugin -->
+<script type="text/javascript">
+    $(document).ready(function($) {
+      (function(){
+        console.log('font');
+        var getCss = function(path) {
+          var head = document.getElementsByTagName('head')[0];
+          link = document.createElement('link');
+          link.href = path;
+          link.rel = 'stylesheet';
+          link.type = 'text/css';
+          head.appendChild(link);
+        };
+        getCss('https://fonts.googleapis.com/css?family=Montserrat:400,700');
+        getCss('https://fonts.googleapis.com/css?family=Open+Sans:400,600');
+      })();
+      $('.flexslider').flexslider({
+        animation: "fade",
+        prevText: "",
+        nextText: "",
+        directionNav: true
+      });
+    });
+</script>
+
+</body>
+</html>
