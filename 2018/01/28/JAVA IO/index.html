@@ -1,0 +1,563 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>JAVA的NIO | HeyLin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="LinKai">
+    
+
+    
+    <meta name="description" content="NIO 是个什么东西？为什么 IO 会比 NIO 快？ 答：IO 靠字符和字节传输，速度慢。NIO 靠 Buffer 一块一块传输，速度快！与此同时，NIO 还加入了多线程控制机制，即：一个 NIO 流可以同时传输多个块，实现异步传输。">
+<meta name="keywords" content="文件IO">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JAVA的NIO">
+<meta property="og:url" content="http://Linkaiup.github.io/2018/01/28/JAVA IO/index.html">
+<meta property="og:site_name" content="HeyLin">
+<meta property="og:description" content="NIO 是个什么东西？为什么 IO 会比 NIO 快？ 答：IO 靠字符和字节传输，速度慢。NIO 靠 Buffer 一块一块传输，速度快！与此同时，NIO 还加入了多线程控制机制，即：一个 NIO 流可以同时传输多个块，实现异步传输。">
+<meta property="og:updated_time" content="2018-01-28T04:52:38.621Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JAVA的NIO">
+<meta name="twitter:description" content="NIO 是个什么东西？为什么 IO 会比 NIO 快？ 答：IO 靠字符和字节传输，速度慢。NIO 靠 Buffer 一块一块传输，速度快！与此同时，NIO 还加入了多线程控制机制，即：一个 NIO 流可以同时传输多个块，实现异步传输。">
+
+    
+    <link rel="alternative" href="atom.xml" title="HeyLin" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/profile.png">
+    <link rel="apple-touch-icon-precomposed" href="/img/profile.png">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HeyLin" title="HeyLin"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HeyLin">HeyLin</a></h1>
+				<h2 class="blog-motto">Remember to sow in the spring.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:Linkaiup.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/01/28/JAVA IO/" title="JAVA的NIO" itemprop="url">JAVA的NIO</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="LinKai" target="_blank" itemprop="author">LinKai</a>
+		
+  <p class="article-time">
+    <time datetime="2018-01-28T04:28:42.000Z" itemprop="datePublished"> 发表于 2018-01-28</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#JAVA-之-NIO"><span class="toc-number">1.</span> <span class="toc-text">JAVA 之 NIO</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、核心组成"><span class="toc-number">1.1.</span> <span class="toc-text">一、核心组成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、Channel"><span class="toc-number">1.2.</span> <span class="toc-text">二、Channel</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、Buffer"><span class="toc-number">1.3.</span> <span class="toc-text">三、Buffer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四、Selector"><span class="toc-number">1.4.</span> <span class="toc-text">四、Selector</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结"><span class="toc-number">2.</span> <span class="toc-text">总结</span></a></li></ol>
+		
+		</div>
+		
+		<p>NIO 是个什么东西？为什么 IO 会比 NIO 快？</p>
+<p>答：IO 靠字符和字节传输，速度慢。NIO 靠 Buffer 一块一块传输，速度快！与此同时，NIO 还加入了多线程控制机制，即：一个 NIO 流可以同时传输多个块，实现异步传输。<br><a id="more"></a></p>
+<hr>
+<h1 id="JAVA-之-NIO"><a href="#JAVA-之-NIO" class="headerlink" title="JAVA 之 NIO"></a>JAVA 之 NIO</h1><hr>
+<blockquote>
+<p>由于最近需要实战到 NIO 的有关代码，而自己之前所学的东西也差不多忘光了，因此重新捡起了 NIO，复习的同时也将其写成博客，促进自己对其的理解。</p>
+</blockquote>
+<h2 id="一、核心组成"><a href="#一、核心组成" class="headerlink" title="一、核心组成"></a>一、核心组成</h2><ol>
+<li>Channels</li>
+<li>Buffers</li>
+<li>Selectors</li>
+</ol>
+<p><strong>Channel 和 Buffer</strong></p>
+<p>​    基本上，所有的 IO 在NIO 中都从一个Channel 开始。Channel 有点象流。 数据可以从Channel读到Buffer中，也可以从Buffer 写到Channel中。</p>
+<p><strong>Selector</strong></p>
+<p>​    Selector允许单线程处理多个 Channel。要使用Selector，得向Selector注册Channel，然后调用它的select()方法。这个方法会一直阻塞到某个注册的通道有事件就绪。一旦这个方法返回，线程就可以处理这些事件，事件的例子有如新连接进来，数据接收等。</p>
+<p>​    下面，我们来认识一下这三个核心的组件。</p>
+<h2 id="二、Channel"><a href="#二、Channel" class="headerlink" title="二、Channel"></a>二、Channel</h2><ol>
+<li><p>Channel 是什么</p>
+<p>一Java NIO的 Channel 类类似流，但又比流高级：</p>
+<ul>
+<li>Channel 可以异步地读写</li>
+<li>从 Channel 中读写取数据时，总要先读或写到一个 Buffer ,然后再进行各自操作</li>
+</ul>
+</li>
+<li><p>Channel 的实现</p>
+<p>一部分重要的通道实现：</p>
+<ul>
+<li>FileChannel：重文件中读取数据</li>
+<li>DatagramChannel：能通过UDP读写网络中的数据</li>
+<li>SocketChannel：能通过TCP读写网络中的数据</li>
+<li>ServerSocketChannel：可以监听新进来的TCP连接，像Web服务器那样。对每一个新进来的<strong>连接</strong>都会创建一个<strong>SocketChannel</strong></li>
+</ul>
+</li>
+<li><p>简单调用示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">RandomAccessFile tFile = <span class="keyword">new</span> RandomAccessFile(<span class="string">"example"</span>,<span class="string">"rw"</span>);</div><div class="line">FileChannel fileChannel = tFile.getChannel();</div><div class="line">ByteBuffer buf = ByteBuffer.allocate(<span class="number">48</span>);</div><div class="line"><span class="keyword">int</span> bytesRead = fileChannel.read(buf);<span class="comment">//注意，此处是 int 型数字，指读到的数据大小</span></div><div class="line"><span class="keyword">while</span> (bytesRead != -<span class="number">1</span>) &#123;</div><div class="line">	System.out.println(<span class="string">"Read "</span> + bytesRead);</div><div class="line">  	...<span class="comment">//其余部分将在 Buffer 中讲解</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="三、Buffer"><a href="#三、Buffer" class="headerlink" title="三、Buffer"></a>三、Buffer</h2><ol>
+<li><p>Buffer 是什么<br>一通俗地理解，Buffer 就是一个存放数据的内存块，NIO 提供了一些访问这块内存块的方法，以此来对数据进行传输操作。</p>
+</li>
+<li><p>Buffer 的类型</p>
+<ul>
+<li>ByteBuffer</li>
+<li>MappedByteBuffer</li>
+<li>CharBuffer</li>
+<li>DoubleBuffer</li>
+<li>FloatBuffer</li>
+<li>IntBuffer</li>
+<li>LongBuffer</li>
+<li>ShortBuffer</li>
+</ul>
+</li>
+<li><p>Buffer 的基本用法</p>
+<p>Buffer 读写数据一般遵循以下四个步骤：</p>
+<ol>
+<li>Buffer 的分配</li>
+<li>写入数据到Buffer</li>
+<li>调用<code>flip()</code>方法</li>
+<li>从Buffer中读取数据</li>
+<li>调用<code>clear()</code>方法或者<code>compact()</code>方法</li>
+</ol>
+<p>​    我们分别以这五个操作来介绍 Buffer（但是 Buffer 并不只提供这几个方法，还有 mark() 和 reset() 等，由于不是主要操作，所以我们不细讲）</p>
+</li>
+<li><p>Buffer 的分配</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">XXXBuffer buf = XXXBuffer.allocate(<span class="number">48</span>);</div></pre></td></tr></table></figure>
+</li>
+<li><p>向 Buffer 中写数据</p>
+<p>写数据到Buffer有两种方式：</p>
+<ol>
+<li><p>从 Channel 写到 Buffer</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> bytesRead = inChannel.read(buf); <span class="comment">//注意！方法名是 read。是读 inChannel 中的数据</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>通过 Buffe r的 put() 方法写到 Buffer 里</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">buf.put(<span class="number">127</span>);<span class="comment">//put方法还有很多版本，以不同的方式把数据写入到Buffer中。例如，写到一个指定的位置，或者把一个字节数组写入到Buffer</span></div></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+<li><p>调用 filp() 方法</p>
+<p>flip 方法将 Buffer 从写模式切换到读模式（将访问 Buffer 中数据的指针移动到最初写进 Buffer 中的数据的位置）</p>
+</li>
+<li><p>从 Buffer 中读取数据</p>
+<p>与从 Buffer 中写数据一样，读数据也有两种方式：</p>
+<ol>
+<li><p>从 Buffer 读取数据到 Channel</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> bytesWritten = inChannel.write(buf);<span class="comment">//注意！方法名是 write，buffer 是主语</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>使用 get() 方法从 Buffer 中读取数据</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">byte</span> aByte = buf.get();<span class="comment">//get方法也有很多版本，允许你以不同的方式从Buffer中读取数据。例如，从指定position读取，或者从Buffer中读取数据到字节数组</span></div></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+<li><p>调用<code>clear()</code>方法或者<code>compact()</code>方法</p>
+<p>​    操作 Buffer 快其实就像在操作定长链表，而这个两个方法就像是对链表中指针的操作。</p>
+<p>​    clear() 方法是将访问 Buffer 块的指针指向了 0 号位置，为下一次写操作做准备。我们会以为这个操作会将 Buffer 块中的数据清空，等待新数据赋值进来，其实并没有，当再次写入时只不过是重新赋值罢了。</p>
+<p>​    而在上一步的读取数据操作时，我们可能会漏访问掉一些元素，那么这个时候 compact() 就派上用场了，compact()方法将所有未读的数据拷贝到Buffer起始处。然后将访问指针设到最后一个未读元素正后面，为下次写入操作做准备。 </p>
+</li>
+<li><p>注意点</p>
+<p>在执行 5 和 7 操作之前，均必须执行 filp() 或 clear() 和 compact() 方法！</p>
+</li>
+</ol>
+<h2 id="四、Selector"><a href="#四、Selector" class="headerlink" title="四、Selector"></a>四、Selector</h2><blockquote>
+<p>由于单独讲解 Selector 不能很好地讲清它的作用，因此我们将结合 ServerSocketChannel（服务端） 和 SocketChannel （客户端）一起来讲解它的作用</p>
+</blockquote>
+<ol>
+<li><p>Selector 是什么</p>
+<p>​    Selector 翻译过来是：选择器，很好理解，是一个用来选择 Channel 的组件。在 Java NIO 中能够检测一到多个NIO通道，并能够知晓通道是否为诸如读写事件做好准备。它就是你注册对各种 I/O 事件感兴趣的地方，而且当这些事件发生时，它会告诉你所发生的事件。通过 Selector，一个单独的线程可以管理多个channel，从而管理多个网络连接。</p>
+<p>​    创建一个 Selector 是第一件事：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Selector selector = Selector.open();</div></pre></td></tr></table></figure>
+</li>
+<li><p>如何向 Selector 注册通道呢？</p>
+<p>​    答案是：对不同的通道对象调用 <code>register()</code> 方法，以便注册我们对这些对象中发生的 I/O 事件的兴趣。</p>
+<p>​    首先，我们创建一个 ServerSocketChannel 对象，用于向 Selector 注册通道</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">ServerSocketChannel ssc = ServerSocketChannel.open();</div><div class="line">ssc.configureBlocking( <span class="keyword">false</span> );<span class="comment">//将 ServerSocketChannel 设置为 非阻塞的 。否则异步 I/O 就不能工作</span></div><div class="line"> </div><div class="line"><span class="comment">//将 ssc 绑定到给定的端口</span></div><div class="line">ServerSocket ss = ssc.socket();</div><div class="line">InetSocketAddress address = <span class="keyword">new</span> InetSocketAddress( ports[i] );</div><div class="line">ss.bind( address );</div></pre></td></tr></table></figure>
+<p>​    对象创建好了，我们调用<code>register</code>方法将其注册给 Selector。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//监听 accept 事件，也就是在新的连接建立时所发生的事件。</span></div><div class="line"><span class="comment">//SelectionKey 代表这个通道在此 Selector 上的这个注册信息， Selector 通过该 //SelectionKey 来通知你某个传入事件。关于 SelectionKey 将在下面细讲。</span></div><div class="line">SelectionKey key = ssc.register( selector, SelectionKey.OP_ACCEPT );</div></pre></td></tr></table></figure>
+<p><strong>注意： <code>OP_ACCEPT</code>（接收就绪）适用于 <code>ServerSocketChannel</code> （服务端）的唯一事件类型！</strong></p>
+<p>​    对于其他对象，如果你不止对一种事件感兴趣，那么可以用“位或”操作符将常量连接起来，</p>
+<p>​    如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">SelectionKey key = channel.register(selector,Selectionkey.OP_READ|SelectionKey.OP_WRITE);</div></pre></td></tr></table></figure>
+<p><strong>穿插点：SelectionKey 知识</strong></p>
+<p>SelectionKey 中的属性：</p>
+<ul>
+<li><p>interest集合</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//可以通过该值判断有无感兴趣的操作</span></div><div class="line"><span class="keyword">int</span> interestSet = selectionKey.interestOps();</div><div class="line"></div><div class="line"><span class="keyword">boolean</span> isInterestedInAccept  = (interestSet &amp; SelectionKey.OP_ACCEPT) == SelectionKey.OP_ACCEPT；</div><div class="line"><span class="comment">//其他值也是类似的</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>ready集合</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> readySet = selectionKey.readyOps();<span class="comment">//readySet是Selection.xxx 的几个常量的值</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>Channel</p>
+</li>
+<li><p>Selector</p>
+</li>
+<li><p>附加的对象（可选）</p>
+<p>可以在用register()方法向Selector注册Channel的时候附加对象。如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">SelectionKey key = channel.register(selector, SelectionKey.OP_READ, theObject);</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>注册完之后如何使用 Selector 来接收信息呢？</p>
+<p>​    答案是：内部循环。等待注册事件的发生。</p>
+<p>​    使用 <code>Selectors</code> 的几乎每个程序都像下面这样使用内部循环：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</div><div class="line">  <span class="keyword">try</span>&#123;</div><div class="line"><span class="comment">//这个方法会阻塞，直到至少有一个已注册的事件发生。当一个或者更多的事件发生时， select() //方法将返回所发生的事件的数量。</span></div><div class="line"><span class="keyword">int</span> num = selector.select();</div><div class="line"></div><div class="line"><span class="comment">//它返回发生了事件的 SelectionKey 对象的一个集合</span></div><div class="line">Set selectedKeys = selector.selectedKeys();</div><div class="line">Iterator it = selectedKeys.iterator();</div><div class="line"> </div><div class="line"><span class="comment">//通过迭代 SelectionKeys 并依次处理每个 SelectionKey 来处理事件</span></div><div class="line"><span class="keyword">while</span> (it.hasNext()) &#123;</div><div class="line">     SelectionKey key = (SelectionKey)it.next();</div><div class="line">     <span class="keyword">switch</span> (key.readyOps()) &#123;</div><div class="line">                <span class="keyword">case</span> SelectionKey.OP_ACCEPT:</div><div class="line">                      	    ...</div><div class="line">                            <span class="keyword">break</span>;</div><div class="line">                <span class="keyword">case</span> SelectionKey.OP_READ:</div><div class="line">         				   ...</div><div class="line">                             <span class="keyword">break</span>;</div><div class="line">       		    <span class="keyword">default</span>:</div><div class="line">         				   ...</div><div class="line">                             <span class="keyword">break</span>;</div><div class="line">     &#125;</div><div class="line">  	it.remove();</div><div class="line">	&#125;</div><div class="line">  &#125;<span class="keyword">catch</span>()&#123;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>接收完信息之后服务端如何处理信息呢？</p>
+<blockquote>
+<p>以上的操作都是服务端的操作，接下来，该排到客户端出马了！</p>
+</blockquote>
+<p>​    执行第三步的方法之后，我们知道这个服务器套接字上有一个传入连接在等待，所以可以安全地接受它（不用担心 <code>accept()</code> 操作会阻塞）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ServerSocketChannel ssc = (ServerSocketChannel)key.channel();</div><div class="line">SocketChannel sc = ssc.accept();<span class="comment">//客户端的连接请求，服务端将其接收下来</span></div></pre></td></tr></table></figure>
+<p>​    下一步是将新连接的 <code>SocketChannel</code> 配置为非阻塞的。而且由于接受这个连接的目的是为了读取来自套接字的数据，所以我们还必须将 <code>SocketChannel</code> 注册到 <code>Selector</code>上，如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">sc.configureBlocking( <span class="keyword">false</span> );</div><div class="line"><span class="comment">//将客户端的读取操作（对象）也注册到 Selector 上，这样 Selector 就同时监听两个对象了</span></div><div class="line">SelectionKey newKey = sc.register( selector, SelectionKey.OP_READ );</div></pre></td></tr></table></figure>
+</li>
+<li><p>接收完信息之后就可以溜之大吉了吗？</p>
+<p>​    回答是：否！</p>
+<p>​    我们必须首先将处理过的 <code>SelectionKey</code> 从选定的键集合中删除。如果我们没有删除处理过的键，那么它仍然会在主集合中以一个激活的键出现，这会导致我们尝试再次处理它。我们调用迭代器的 <code>remove()</code> 方法来删除处理过的 <code>SelectionKey</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">it.remove();	<span class="comment">//之后方可跳出第三步的代码中的主循环</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>当客户端发出连接操作时，我们又回到了第三步的主循环中，对读操作进行处理。</p>
+</li>
+</ol>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>​    本篇内容对 JAVA NIO 的一些常用工具组件进行了讲解，也对各自的操作进行了简要的介绍，并在最后一小节，Selector 的介绍中实战了服务端与客户端的部分代码，希望对你有所帮助。如果博客中有所缺漏或者错误，欢迎骚扰指正。</p>
+<p>​&gt; 注：Java 的 NIO 不只有上面提到的那些组件，还有 datagram 和 pipe 等。由于不常用，所以没有在这里进行讲解，《疯狂 Java 讲义》一书中也有对这些组件的介绍，感兴趣的童鞋可以自己去查阅。</p>
+<p style="center"><br> <span id="busuanzi_container_page_pv"><br>  本文总阅读量<span id="busuanzi_value_page_pv"></span>次<br></span><br></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/文件IO/">文件IO</a>
+  </div>
+
+</div>
+
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2017/07/17/什么是Java对象序列化/"  title="什么是Java对象序列化">
+ <span>什么是Java对象序列化
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+<div id="authorInfo">
+	
+		<div class="author-img"></div>		
+	
+	<div class="social-info" class="clearfix">
+		
+		
+		<a href="https://github.com/linkaiup" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://linkaiup.tumblr.com" target="_blank" class="icon-tumblr" title="Tumblr"></a>
+		
+		
+		<a href="mailto:876487322@qq.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+
+	</div>
+</div>
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Java进阶/" title="Java进阶">Java进阶<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Java/" title="Java">Java<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/文件IO/" title="文件IO">文件IO<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+<div id="footer" >
+		
+		
+
+		<p class="copyright">
+		<span id="busuanzi_container_site_pv" style='display:none'>
+                    本站总访问量为<span id="busuanzi_value_site_pv"></span>次
+   		</span>
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/hsihohuang/kiddochan" target="_blank" title="Kiddochan">Kiddochan</a> © 2018 
+		
+		<a href="/about" target="_blank" title="LinKai">LinKai</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
