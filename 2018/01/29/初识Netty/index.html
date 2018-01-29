@@ -1,0 +1,448 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>初识 Netty | HeyLin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="LinKai">
+    
+
+    
+    <meta name="description" content="首先我们要明白，选择 Netty 的理由是什么？">
+<meta name="keywords" content="文件IO">
+<meta property="og:type" content="article">
+<meta property="og:title" content="初识 Netty">
+<meta property="og:url" content="http://Linkaiup.github.io/2018/01/29/初识Netty/index.html">
+<meta property="og:site_name" content="HeyLin">
+<meta property="og:description" content="首先我们要明白，选择 Netty 的理由是什么？">
+<meta property="og:updated_time" content="2018-01-29T14:07:13.055Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="初识 Netty">
+<meta name="twitter:description" content="首先我们要明白，选择 Netty 的理由是什么？">
+
+    
+    <link rel="alternative" href="atom.xml" title="HeyLin" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/profile.png">
+    <link rel="apple-touch-icon-precomposed" href="/img/profile.png">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HeyLin" title="HeyLin"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HeyLin">HeyLin</a></h1>
+				<h2 class="blog-motto">Remember to sow in the spring.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:Linkaiup.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/01/29/初识Netty/" title="初识 Netty" itemprop="url">初识 Netty</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="LinKai" target="_blank" itemprop="author">LinKai</a>
+		
+  <p class="article-time">
+    <time datetime="2018-01-29T14:05:18.000Z" itemprop="datePublished"> 发表于 2018-01-29</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#初识-Netty"><span class="toc-number">1.</span> <span class="toc-text">初识 Netty</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#选择-Netty-的理由"><span class="toc-number">1.1.</span> <span class="toc-text">选择 Netty 的理由</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Netty-小例子–时间服务器"><span class="toc-number">1.2.</span> <span class="toc-text">Netty 小例子–时间服务器</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<p>首先我们要明白，选择 Netty 的理由是什么？<br><a id="more"></a></p>
+<hr>
+<h1 id="初识-Netty"><a href="#初识-Netty" class="headerlink" title="初识 Netty"></a>初识 Netty</h1><h2 id="选择-Netty-的理由"><a href="#选择-Netty-的理由" class="headerlink" title="选择 Netty 的理由"></a>选择 Netty 的理由</h2><ol>
+<li>Java 原生 NIO 编程的缺点：<ol>
+<li>NIO 的类库和 API 繁杂，使用麻烦。</li>
+<li>需要具备其他额外技能做铺垫，诸如 Java 多线程编程。因为 NIO 涉及到 Reactor 模式，必须对多线程和网络编程非常熟悉。</li>
+<li>对于客户端的断连重连、网络闪断、半包读写、失败缓存、网络拥塞和异常码流的处理等问题，可靠性等补齐难度都比较大。</li>
+<li>JDK NIO 的 BUG（Linux 系统中的 NIO 是使用 epoll 实现的，而不是 pool，它会导致 Selector 空轮询，CPU 占用会到达 100%。</li>
+</ol>
+</li>
+<li>Netty 的优点：<ol>
+<li>API 简单</li>
+<li>功能强大，预置了多种编解码功能，支持多种主流协议。</li>
+<li>定制能力强，可通过 ChannelHandler 对通信框架进行灵活地拓展</li>
+</ol>
+</li>
+</ol>
+<h2 id="Netty-小例子–时间服务器"><a href="#Netty-小例子–时间服务器" class="headerlink" title="Netty 小例子–时间服务器"></a>Netty 小例子–时间服务器</h2><blockquote>
+<p>初来乍到，与 Netty 还未熟悉，我们先通过一个简单的例子来认识一下这个 NIO 框架大佬</p>
+</blockquote>
+<ol>
+<li><p>明确需求</p>
+<p>服务端提供一个实时报时服务，客户端请求服务端获取当前时间</p>
+</li>
+<li><p>客户端搭建</p>
+<p>TimeClient :</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TimeClient</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">connect</span><span class="params">(<span class="keyword">int</span> port,String host)</span><span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">        <span class="comment">//配置客户端的 NIO 线程组</span></div><div class="line">        EventLoopGroup group = <span class="keyword">new</span> NioEventLoopGroup();</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            Bootstrap b = <span class="keyword">new</span> Bootstrap();</div><div class="line">            b.group(group).channel(NioSocketChannel.class)</div><div class="line">             .option(ChannelOption.TCP_NODELAY,<span class="keyword">true</span>)</div><div class="line">             .handler(<span class="keyword">new</span> ChannelInitializer&lt;SocketChannel&gt;() &#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">initChannel</span><span class="params">(SocketChannel ch)</span><span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">            <span class="comment">//利用 LineBasedFrameDecoder 和 StringDecoder 解决 TCP 粘包问题</span></div><div class="line">            ch.pipeline().addLast(<span class="keyword">new</span> LineBasedFrameDecoder(<span class="number">1024</span>));</div><div class="line">            ch.pipeline().addLast(<span class="keyword">new</span> StringDecoder());</div><div class="line">            ch.pipeline().addLast(<span class="keyword">new</span> TimeClientHandler());</div><div class="line">         &#125;</div><div class="line">     &#125;);</div><div class="line"></div><div class="line">            <span class="comment">//发起异步连接操作</span></div><div class="line">            ChannelFuture f = b.connect(host,port).sync();</div><div class="line"></div><div class="line">            <span class="comment">//等待客户端链路关闭</span></div><div class="line">            f.channel().closeFuture().sync();</div><div class="line">        &#125;<span class="keyword">finally</span> &#123;</div><div class="line">            <span class="comment">//优雅退出，释放 NIO 线程组</span></div><div class="line">            group.shutdownGracefully();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">        <span class="keyword">int</span> port = <span class="number">8080</span>;</div><div class="line">        <span class="keyword">if</span>(args != <span class="keyword">null</span> &amp;&amp; args.length &gt; <span class="number">0</span>)&#123;</div><div class="line">            <span class="keyword">try</span> &#123;</div><div class="line">                port = Integer.valueOf(args[<span class="number">0</span>]);</div><div class="line">            &#125;<span class="keyword">catch</span> (NumberFormatException e)&#123;</div><div class="line">                <span class="comment">//采用默认值</span></div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">new</span> TimeClient().connect(port , <span class="string">"127.0.0.1"</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>​    接下来是 Handler 类，继承 ChannelHandlerAdapter，用于对网络事件进行读写操作，其下都是它方法的实现</p>
+<p>TimeClientHandler:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TimeClientHandler</span> <span class="keyword">extends</span> <span class="title">ChannelHandlerAdapter</span></span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Logger logger = Logger.getLogger(TimeClientHandler.class.getName());</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> counter;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">byte</span>[] req;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * Creates a client-side handler.</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">TimeClientHandler</span><span class="params">()</span></span>&#123;</div><div class="line">      <span class="comment">//System.getProperty("line.separator")是换行符,功能和"\n"是一致的,而且这种写法屏蔽了Windows和Linux的区别，更保险一些</span></div><div class="line">        req = (<span class="string">"QUERY TIME ORDER "</span> + System.getProperty(<span class="string">"line.separator"</span>)).getBytes();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelActive</span><span class="params">(ChannelHandlerContext ctx)</span></span>&#123;</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>;i&lt;<span class="number">100</span>;i++)&#123;</div><div class="line">            ByteBuf message = Unpooled.copiedBuffer(req);</div><div class="line">            ctx.writeAndFlush(message);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelRead</span><span class="params">(ChannelHandlerContext ctx,Object msg)</span><span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">        String body = (String)msg;</div><div class="line">        System.out.println(<span class="string">"Now is : "</span> + body + <span class="string">"; the counter is :"</span> + ++counter);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">exceptionCaught</span><span class="params">(ChannelHandlerContext ctx,Throwable cause)</span></span>&#123;</div><div class="line">        logger.warning(<span class="string">"Unexpected exception from downstream : "</span> + cause.getMessage());</div><div class="line">        ctx.close();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>服务端搭建</p>
+<p>TimeServer:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TimeServer</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">bind</span><span class="params">(<span class="keyword">int</span> port)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line"></div><div class="line">        <span class="comment">//配置服务端的 NIO 线程组，包含了一组 NIO 线程，专门用于网络事件的处理</span></div><div class="line">        <span class="comment">//一个用于服务端接受客户端的连接，另一个用于进行 SocketChannel 的网络读写</span></div><div class="line">        EventLoopGroup bossGroup = <span class="keyword">new</span> NioEventLoopGroup();</div><div class="line">        EventLoopGroup workerGroup = <span class="keyword">new</span> NioEventLoopGroup();</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            <span class="comment">//Netty 用于启动 NIO 服务端的辅助启动类，能降低服务端开发复杂度</span></div><div class="line">            ServerBootstrap b = <span class="keyword">new</span> ServerBootstrap();</div><div class="line">            b.group(bossGroup, workerGroup) <span class="comment">//将两个线程组传到 ServerBootstrap 中</span></div><div class="line">             .channel(NioServerSocketChannel.class) <span class="comment">//设置创建的Channel为 NioServerSocketChannel</span></div><div class="line">             .option(ChannelOption.SO_BACKLOG, <span class="number">1024</span>)<span class="comment">//配置 TCP 参数，backlog 为1024</span></div><div class="line">             .childHandler(<span class="keyword">new</span> ChildChannelHandler());       <span class="comment">//绑定 I/O 事件的处理类</span></div><div class="line">            <span class="comment">//调用 bind 方法绑定监听端口，再调用同步阻塞方法 sync 等待绑定操作完成</span></div><div class="line">            ChannelFuture f = b.bind(port).sync();</div><div class="line">            <span class="comment">//同步等待成功，ChannelFuture 主要用于异步操作的通知回调</span></div><div class="line"></div><div class="line">            <span class="comment">//等待服务端监听端口关闭</span></div><div class="line">            f.channel().closeFuture().sync();</div><div class="line">            <span class="comment">//关闭之后 main 函数才退出</span></div><div class="line">        &#125;<span class="keyword">finally</span> &#123;</div><div class="line">            <span class="comment">//优雅退出</span></div><div class="line">            bossGroup.shutdownGracefully();</div><div class="line">            workerGroup.shutdownGracefully();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">  	<span class="comment">//绑定 I/O 事件的处理类</span></div><div class="line">    <span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">ChildChannelHandler</span> <span class="keyword">extends</span> <span class="title">ChannelInitializer</span>&lt;<span class="title">SocketChannel</span>&gt; </span>&#123;</div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initChannel</span><span class="params">(SocketChannel arg0)</span><span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">            <span class="comment">//利用 LineBasedFrameDecoder 和 StringDecoder 解决 TCP 粘包问题</span></div><div class="line">            arg0.pipeline().addLast(<span class="keyword">new</span> LineBasedFrameDecoder(<span class="number">1024</span>));</div><div class="line">            arg0.pipeline().addLast(<span class="keyword">new</span> StringDecoder());</div><div class="line">            arg0.pipeline().addLast(<span class="keyword">new</span> TimeServerHandler());</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">        <span class="keyword">int</span> port = <span class="number">8080</span>;</div><div class="line">        <span class="keyword">if</span> (args != <span class="keyword">null</span> &amp;&amp; args.length &gt; <span class="number">0</span>)&#123;</div><div class="line">            <span class="keyword">try</span> &#123;</div><div class="line">                port = Integer.valueOf(args[<span class="number">0</span>]);</div><div class="line">            &#125;<span class="keyword">catch</span> (NumberFormatException e)&#123;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">new</span> TimeServer().bind(port);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>TimeServerHandler:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TimeServerHandler</span> <span class="keyword">extends</span> <span class="title">ChannelHandlerAdapter</span></span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> counter;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelRead</span><span class="params">(ChannelHandlerContext ctx,Object msg)</span><span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">        String body = (String) msg;</div><div class="line">        System.out.println(<span class="string">"The time server receive order : "</span> + body + <span class="string">" ; the counter is :"</span> + ++counter);</div><div class="line">        String currentTime = <span class="string">"QUERY TIME ORDER"</span>.equalsIgnoreCase(body) ? <span class="keyword">new</span> java.util.Date(System.currentTimeMillis()).toString() : <span class="string">"BAD ORDER"</span>;</div><div class="line">        <span class="comment">//System.getProperty("line.separator")是换行符,功能和"\n"是一致的,而且这种写法屏蔽了Windows和Linux的区别，更保险一些</span></div><div class="line">        currentTime = currentTime + System.getProperty(<span class="string">"line.separator"</span>);</div><div class="line"></div><div class="line">        <span class="comment">//Netty 的 ByteBuf 对象类似于 JDK 中的 java.nio.ByteBuffer 对象，不过其功能更加强大和灵活</span></div><div class="line">        ByteBuf resp = Unpooled.copiedBuffer(currentTime.getBytes());</div><div class="line"></div><div class="line">        <span class="comment">//通过 ChannelHandlerContext.writeAndFlush 方法异步发送应答消息给客户端（先发送到缓冲区之后再发送到 SocketChannel 上）</span></div><div class="line">        ctx.writeAndFlush(resp);</div><div class="line">    &#125;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">exceptionCaught</span><span class="params">(ChannelHandlerContext ctx,Throwable cause)</span> </span>&#123;</div><div class="line">        <span class="comment">//发生异常时，关闭 ChannelHandlerContext，并释放相关句柄</span></div><div class="line">        ctx.close();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>注意点：LineBasedFrameDecoder 和 StringDecoder 的原理分析</p>
+<p>为什么我们要在 SocketChannel 中加上这两个解码器呢？</p>
+<p>答：因为加上这两个解码器能够解决 TCP 粘包/拆包问题</p>
+<blockquote>
+<p>TCP 粘包/拆包问题：用 TCP 传输数据，会出现当多条数据一起传来时，挤压在一起的情况，导致出现条件不符的现象，如上面条件，不只是一个 “QUERY TIME ORDER”，而是多个）</p>
+</blockquote>
+<p>​    其实，LineBasedFrameDecoder 的工作原理是它依次遍历 ByteBuf 中的可读字节，判断看是否有 “\n” 或者 “\r\n”，如果有，就以此位置为结束，从而可读索引到结束位置区间的字节就组成了一行。而 StringDecoder 则是将收到的对象转换成字符串。LineBasedFrameDecoder + StringDecoder 组合就是按行切换的文本解码器，用来支持 TCP 的粘包和拆包。</p>
+<p>​    由于以换行符作为结束的标志这种情况太过简单，当我们遇到一些复杂情况时，该方法就没有了用处，那么该怎么办呢？</p>
+<p>​    不急！这节的关键是简单地介绍 Netty 的使用方法，让大家对 Netty 有初步的认识而已。下一篇文章，我们将学习 Netty 更多的解码器，到时，我们就能够用 Netty 施展更多的身手啦~</p>
+<p style="center"><br><span id="busuanzi_container_page_pv"><br>本文总阅读量<span id="busuanzi_value_page_pv"></span>次<br></span><br></p>
+</li>
+</ol>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/文件IO/">文件IO</a>
+  </div>
+
+</div>
+
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2018/01/28/JAVA IO/"  title="JAVA的NIO">
+ <span>JAVA的NIO
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+<div id="authorInfo">
+	
+		<div class="author-img"></div>		
+	
+	<div class="social-info" class="clearfix">
+		
+		
+		<a href="https://github.com/linkaiup" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://linkaiup.tumblr.com" target="_blank" class="icon-tumblr" title="Tumblr"></a>
+		
+		
+		<a href="mailto:876487322@qq.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+
+	</div>
+</div>
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/文件IO/" title="文件IO">文件IO<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Java进阶/" title="Java进阶">Java进阶<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Java/" title="Java">Java<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+<div id="footer" >
+		
+		
+
+		<p class="copyright">
+		<span id="busuanzi_container_site_pv" style='display:none'>
+                    本站总访问量为<span id="busuanzi_value_site_pv"></span>次
+   		</span>
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/hsihohuang/kiddochan" target="_blank" title="Kiddochan">Kiddochan</a> © 2018 
+		
+		<a href="/about" target="_blank" title="LinKai">LinKai</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
