@@ -18,7 +18,7 @@
 <meta property="og:url" content="http://Linkaiup.github.io/2018/01/29/初识Netty/index.html">
 <meta property="og:site_name" content="HeyLin">
 <meta property="og:description" content="首先我们要明白，选择 Netty 的理由是什么？">
-<meta property="og:updated_time" content="2018-01-29T14:07:13.055Z">
+<meta property="og:updated_time" content="2018-01-30T01:33:48.519Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="初识 Netty">
 <meta name="twitter:description" content="首先我们要明白，选择 Netty 的理由是什么？">
@@ -97,7 +97,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#初识-Netty"><span class="toc-number">1.</span> <span class="toc-text">初识 Netty</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#选择-Netty-的理由"><span class="toc-number">1.1.</span> <span class="toc-text">选择 Netty 的理由</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Netty-小例子–时间服务器"><span class="toc-number">1.2.</span> <span class="toc-text">Netty 小例子–时间服务器</span></a></li></ol></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#初识-Netty"><span class="toc-number">1.</span> <span class="toc-text">初识 Netty</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#选择-Netty-的理由"><span class="toc-number">1.1.</span> <span class="toc-text">选择 Netty 的理由</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Netty-小例子–时间服务器"><span class="toc-number">1.2.</span> <span class="toc-text">Netty 小例子–时间服务器</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结"><span class="toc-number">2.</span> <span class="toc-text">总结</span></a></li></ol>
 		
 		</div>
 		
@@ -145,11 +145,11 @@
 <p>TCP 粘包/拆包问题：用 TCP 传输数据，会出现当多条数据一起传来时，挤压在一起的情况，导致出现条件不符的现象，如上面条件，不只是一个 “QUERY TIME ORDER”，而是多个）</p>
 </blockquote>
 <p>​    其实，LineBasedFrameDecoder 的工作原理是它依次遍历 ByteBuf 中的可读字节，判断看是否有 “\n” 或者 “\r\n”，如果有，就以此位置为结束，从而可读索引到结束位置区间的字节就组成了一行。而 StringDecoder 则是将收到的对象转换成字符串。LineBasedFrameDecoder + StringDecoder 组合就是按行切换的文本解码器，用来支持 TCP 的粘包和拆包。</p>
-<p>​    由于以换行符作为结束的标志这种情况太过简单，当我们遇到一些复杂情况时，该方法就没有了用处，那么该怎么办呢？</p>
-<p>​    不急！这节的关键是简单地介绍 Netty 的使用方法，让大家对 Netty 有初步的认识而已。下一篇文章，我们将学习 Netty 更多的解码器，到时，我们就能够用 Netty 施展更多的身手啦~</p>
-<p style="center"><br><span id="busuanzi_container_page_pv"><br>本文总阅读量<span id="busuanzi_value_page_pv"></span>次<br></span><br></p>
 </li>
 </ol>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>   ​    这节，我们使用时间服务器的实例，简单地介绍了 Netty 的使用方法，让大家对 Netty 有了初步的认识。并且使用了 LineBasedFrameDecoder + StringDecoder 组合的文本解码器解决了 TCP 粘包/拆包所导致的问题。<br>       但大家可能会问了，以换行符作为结束的标志这种情况太过简单，当我们遇到一些复杂情况时，该方法就没有了用处，该怎么办呢？</p>
+<p>   ​    不急！这节的关键是让大家对 Netty 有个初步的认识而已。下一篇文章，我们将学习 Netty 更多的解码器，到时，我们就能够用 Netty 施展更多的身手啦~</p>
+<p style="center"><br> <span id="busuanzi_container_page_pv"><br>  本文总阅读量<span id="busuanzi_value_page_pv"></span>次<br></span><br></p>
   
 	</div>
 		<footer class="article-footer clearfix">
