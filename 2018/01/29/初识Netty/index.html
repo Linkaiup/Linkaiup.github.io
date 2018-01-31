@@ -97,7 +97,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#初识-Netty"><span class="toc-number">1.</span> <span class="toc-text">初识 Netty</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#选择-Netty-的理由"><span class="toc-number">1.1.</span> <span class="toc-text">选择 Netty 的理由</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Netty-小例子–时间服务器"><span class="toc-number">1.2.</span> <span class="toc-text">Netty 小例子–时间服务器</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结"><span class="toc-number">2.</span> <span class="toc-text">总结</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#初识-Netty"><span class="toc-number">1.</span> <span class="toc-text">初识 Netty</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#选择-Netty-的理由"><span class="toc-number">1.1.</span> <span class="toc-text">选择 Netty 的理由</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Netty-小例子–时间服务器"><span class="toc-number">1.2.</span> <span class="toc-text">Netty 小例子–时间服务器</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结"><span class="toc-number">2.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#更新"><span class="toc-number">3.</span> <span class="toc-text">更新</span></a></li></ol>
 		
 		</div>
 		
@@ -148,9 +148,18 @@
 </li>
 </ol>
 <h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>   ​    这节，我们使用时间服务器的实例，简单地介绍了 Netty 的使用方法，让大家对 Netty 有了初步的认识。并且使用了 LineBasedFrameDecoder + StringDecoder 组合的文本解码器解决了 TCP 粘包/拆包所导致的问题。<br>       但大家可能会问了，以换行符作为结束的标志这种情况太过简单，当我们遇到一些复杂情况时，该方法就没有了用处，该怎么办呢？</p>
-<p>   ​    不急！这节的关键是让大家对 Netty 有个初步的认识而已。下一篇文章，我们将学习 Netty 更多的解码器，到时，我们就能够用 Netty 施展更多的身手啦~</p>
-<p style="center"><br> <span id="busuanzi_container_page_pv"><br>  本文总阅读量<span id="busuanzi_value_page_pv"></span>次<br></span><br></p>
-  
+<pre><code>不急！这节的关键是让大家对 Netty 有个初步的认识而已。下一篇文章，我们将学习 Netty 更多的解码器，到时，我们就能够用 Netty 施展更多的身手啦~
+</code></pre><h1 id="更新"><a href="#更新" class="headerlink" title="更新"></a>更新</h1><p>​    （2018/1/31）</p>
+<p>​    对于 Netty 的更多解码器的讲解，本来以为需要另起一篇进行讲解的，学习完另外两种编码器之后发现并没有这个必要。因此下面将简单讲解一下 DelimiterBasedFrameDecoder 和 FixedLengthFrameDecoder 两种编码器。</p>
+<p>DelimiterBasedFrameDecoder ：</p>
+<p>​    Delimiter：定界符。顾名思义，就是以分隔符作为码流结束标识的消息的解码。使用它其实很简单，只需要将编码器加入到<code>ChannelPipeline</code> 中：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ByteBuf delimiter = Unpooled.copiedBuffer(<span class="string">"$_"</span>.getBytes());</div><div class="line">ch.pipeline().addLast(<span class="keyword">new</span> DelimiterBasedFrameDecoder（<span class="number">1024</span>,delimiter）);<span class="comment">//1024为单条消息的最大长度</span></div></pre></td></tr></table></figure>
+<p>​    这样，Channel 就会自动完成以分隔符为码流结束标识的消息的解码了。</p>
+<hr>
+<p>FixedLengthFrameDecoder：</p>
+<p>​    FixedLength：固定长度。能够按照指定的长度对消息进行自动解码。只需将编码器加入到<code>ChannelPipeline</code> 中就能使用：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ch.pipeline().addLast(<span class="keyword">new</span> FixedLengthFrameDecoder（<span class="number">20</span>）);</div></pre></td></tr></table></figure>
+<p style="center"><br> <span id="busuanzi_container_page_pv"><br>  本文总阅读量<span id="busuanzi_value_page_pv"></span>次<br></span><br></p>  
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
@@ -228,11 +237,11 @@
 			
 		
 			
-				<li><a href="/tags/Java进阶/" title="Java进阶">Java进阶<sup>1</sup></a></li>
+				<li><a href="/tags/Java/" title="Java">Java<sup>1</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Java/" title="Java">Java<sup>1</sup></a></li>
+				<li><a href="/tags/Java进阶/" title="Java进阶">Java进阶<sup>1</sup></a></li>
 			
 		
 		</ul>
