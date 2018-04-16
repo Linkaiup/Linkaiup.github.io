@@ -20,7 +20,7 @@
 <meta property="og:description" content="之前寒假了解了一下多线程的知识，但是一直没有总结起来。这几天刚好被师兄问到了多线程里已经废弃了的 stop() 方法，才醒悟到自己多线程的东西还没总结。今天开始第一篇—-stop() 方法为什么被废弃？">
 <meta property="og:image" content="http://osf4ctzpn.bkt.clouddn.com/%E7%BA%BF%E7%A8%8B1.png">
 <meta property="og:image" content="http://osf4ctzpn.bkt.clouddn.com/%E7%BA%BF%E7%A8%8B2.png">
-<meta property="og:updated_time" content="2018-04-16T05:50:23.333Z">
+<meta property="og:updated_time" content="2018-04-16T05:55:20.234Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java 多线程之 Stop() 方法">
 <meta name="twitter:description" content="之前寒假了解了一下多线程的知识，但是一直没有总结起来。这几天刚好被师兄问到了多线程里已经废弃了的 stop() 方法，才醒悟到自己多线程的东西还没总结。今天开始第一篇—-stop() 方法为什么被废弃？">
@@ -100,7 +100,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Java-多线程之-Stop-方法"><span class="toc-number">1.</span> <span class="toc-text">Java 多线程之 Stop() 方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Java中多线程锁释放的三个条件："><span class="toc-number">2.</span> <span class="toc-text">Java中多线程锁释放的三个条件：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#中断机制："><span class="toc-number">3.</span> <span class="toc-text">中断机制：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Java-多线程之-Stop-方法"><span class="toc-number">1.</span> <span class="toc-text">Java 多线程之 Stop() 方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Java中多线程锁释放的三个条件"><span class="toc-number">2.</span> <span class="toc-text">Java中多线程锁释放的三个条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#中断机制"><span class="toc-number">3.</span> <span class="toc-text">中断机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#中断的相关方法"><span class="toc-number">4.</span> <span class="toc-text">中断的相关方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">5.</span> <span class="toc-text">总结</span></a></li></ol>
 		
 		</div>
 		
@@ -160,14 +160,14 @@
 </ol>
 <p>没办法 fix，那就只能 deprecate。那么，到底应该如何正确地停止一个线程呢。我们先从释放锁的方</p>
 <p>式中筛选一下。</p>
-<h2 id="Java中多线程锁释放的三个条件："><a href="#Java中多线程锁释放的三个条件：" class="headerlink" title="Java中多线程锁释放的三个条件："></a>Java中多线程锁释放的三个条件：</h2><p>1）执行完同步代码块，就会释放锁。（synchronized）</p>
+<h2 id="Java中多线程锁释放的三个条件"><a href="#Java中多线程锁释放的三个条件" class="headerlink" title="Java中多线程锁释放的三个条件"></a>Java中多线程锁释放的三个条件</h2><p>1）执行完同步代码块，就会释放锁。（synchronized）</p>
 <p>2）在执行同步代码块的过程中，遇到异常而导致线程终止，锁也会被释放。（exception）</p>
 <p>3）在执行同步代码块的过程中，执行了锁所属对象的wait()方法，这个线程会释放锁，进入对象的等</p>
 <p>​       待池。(wait)</p>
 <p>stop 方法释放锁就是上面的第二点，通过抛出异常来释放锁，通过前面的分析，我们知道了，这种方</p>
 <p>式其实是不安全的，不可靠的，也是及其危险的。</p>
 <p>​    因此，Java提供了一种用于<strong>正确停止线程的机制</strong>—-中断。</p>
-<h2 id="中断机制："><a href="#中断机制：" class="headerlink" title="中断机制："></a>中断机制：</h2><ul>
+<h2 id="中断机制"><a href="#中断机制" class="headerlink" title="中断机制"></a>中断机制</h2><ul>
 <li><p>中断只是一种协作机制，Java没有给中断增加任何语法，中断的过程完全需要程序员自己实现。</p>
 <p>若要中断一个线程，你需要手动调用该线程的interrupted方法，该方法也仅仅是将线程对象的中</p>
 <p>断标识设成true；接着你需要自己写代码不断地检测当前线程的标识位；如果为true，表示别的</p>
@@ -180,8 +180,7 @@
 <p>在自己的线程中调用。</p>
 </li>
 </ul>
-<p>###中断的相关方法：</p>
-<ul>
+<h2 id="中断的相关方法"><a href="#中断的相关方法" class="headerlink" title="中断的相关方法"></a>中断的相关方法</h2><ul>
 <li><p>public void interrupt() </p>
 <p>将调用者线程的中断状态设为true。</p>
 </li>
@@ -289,11 +288,11 @@
 			
 		
 			
-				<li><a href="/tags/Java/" title="Java">Java<sup>1</sup></a></li>
+				<li><a href="/tags/Java多线程/" title="Java多线程">Java多线程<sup>1</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Java多线程/" title="Java多线程">Java多线程<sup>1</sup></a></li>
+				<li><a href="/tags/Java/" title="Java">Java<sup>1</sup></a></li>
 			
 		
 		</ul>
