@@ -20,7 +20,7 @@
 <meta property="og:description" content="之前寒假了解了一下多线程的知识，但是一直没有总结起来。这几天刚好被师兄问到了多线程里已经废弃了的 stop() 方法，才醒悟到自己多线程的东西还没总结。今天开始第一篇—-stop() 方法为什么被废弃？">
 <meta property="og:image" content="http://osf4ctzpn.bkt.clouddn.com/%E7%BA%BF%E7%A8%8B1.png">
 <meta property="og:image" content="http://osf4ctzpn.bkt.clouddn.com/%E7%BA%BF%E7%A8%8B2.png">
-<meta property="og:updated_time" content="2018-04-16T05:55:20.234Z">
+<meta property="og:updated_time" content="2018-04-16T06:00:28.844Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java 多线程之 Stop() 方法">
 <meta name="twitter:description" content="之前寒假了解了一下多线程的知识，但是一直没有总结起来。这几天刚好被师兄问到了多线程里已经废弃了的 stop() 方法，才醒悟到自己多线程的东西还没总结。今天开始第一篇—-stop() 方法为什么被废弃？">
@@ -111,73 +111,45 @@
 <blockquote>
 <p>1、该方法强迫停止一个线程，并抛出一个新创建的ThreadDeath对象作为异常。</p>
 <p>2、停止一个尚未启动的线程是允许的，如果稍后启动该线程，它会立即终止。</p>
-<p>3、通常不应试图捕获ThreadDeath，除非它必须执行某些异常的清除操作。如果catch子句捕获 </p>
-<p>​      了一个ThreadDeath对象，则必须重新抛出该对象，这样该线程才会真正终止。</p>
+<p>3、通常不应试图捕获ThreadDeath，除非它必须执行某些异常的清除操作。如果catch子句捕获<br>​      了一个ThreadDeath对象，则必须重新抛出该对象，这样该线程才会真正终止。</p>
 </blockquote>
 <p>​    对于一个已经被 deprecate 的方法。我们接着也就得看看嫌弃它的官方文档的内容啦。</p>
 <blockquote>
 <p>Because it is inherently unsafe. Stopping a thread causes it to unlock all the monitors that it has locked. (The monitors are unlocked as the ThreadDeath exception propagates up the stack.) If any of the objects previously protected by these monitors were in an inconsistent state, other threads may now view these objects in an inconsistent state. Such objects are said to be damaged. When threads operate on damaged objects, arbitrary behavior can result. This behavior may be subtle and difficult to detect, or it may be pronounced. Unlike other unchecked exceptions, ThreadDeath kills threads silently; thus, the user has no warning that his program may be corrupted. The corruption can manifest itself at any time after the actual damage occurs, even hours or days in the future.</p>
 </blockquote>
-<p>​    说了这么多，简而言之就是，stop() 方法是不安全不可控的，该方法将会释放线程所持有的<strong>所有</strong></p>
-<p><strong>锁</strong>，使被保护的数据被破坏，出现奇怪的应用程序错误。然而为什么会出现奇怪的应用程序错误呢？</p>
-<p>为什么这个方法是不可控的呢？</p>
-<p>​    在讲清楚这个问题之前，我们得先明确一点。一个线程不应该由其他线程来强制中断或停止，而</p>
-<p>是应该由线程自己自行停止。<strong>然而！</strong> stop 方法是<strong>在一个线程中强行关闭别的线程。</strong>（意想不到</p>
-<p>吧）。强制关闭别的线程会出现什么情况呢？</p>
-<p>​    一般进行加锁的代码块，都是为了保护数据的一致性，而调用别的线程的 stop() 方法后，其他线</p>
-<p>程会马上释放锁，锁被破坏掉之后，它就会停止保护线程安全数据的操作，理所应当的，被保护的数</p>
-<p>据就有可能出现不一致性的情况，而其他线程一旦使用了这些被破坏的数据，奇怪的错误就会接踵而</p>
-<p>至了。</p>
-<p>​    需要注意的是除了数据不同步之外，stop() 方法还会导致另外一种情况，那就是会导致线程B的</p>
-<p>一些清理工作无法完成，比如，<strong>数据库连接的关闭</strong>，比如，<strong>局部变量的释放</strong>。想想这骚操作带来的可</p>
-<p>怕后果…….</p>
+<p>​    说了这么多，简而言之就是，stop() 方法是不安全不可控的，该方法将会释放线程所持有的<strong>所有锁</strong>，使被保护的数据被破坏，出现奇怪的应用程序错误。然而为什么会出现奇怪的应用程序错误呢？为什么这个方法是不可控的呢？</p>
+<p>​    在讲清楚这个问题之前，我们得先明确一点。一个线程不应该由其他线程来强制中断或停止，而是应该由线程自己自行停止。<strong>然而！</strong> stop 方法是<strong>在一个线程中强行关闭别的线程。</strong>（意想不到吧）。强制关闭别的线程会出现什么情况呢？<br>​    一般进行加锁的代码块，都是为了保护数据的一致性，而调用别的线程的 stop() 方法后，其他线程会马上释放锁，锁被破坏掉之后，它就会停止保护线程安全数据的操作，理所应当的，被保护的数据就有可能出现不一致性的情况，而其他线程一旦使用了这些被破坏的数据，奇怪的错误就会接踵而至了。</p>
+<p>​    需要注意的是除了数据不同步之外，stop() 方法还会导致另外一种情况，那就是会导致线程B的一些清理工作无法完成，比如，<strong>数据库连接的关闭</strong>，比如，<strong>局部变量的释放</strong>。想想这骚操作带来的可怕后果…….</p>
 <p>​    想想当然是不可能想想的啦，我们来实践一下破坏锁的例子：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;    </div><div class="line">		<span class="comment">//定义锁对象  </span></div><div class="line">        <span class="keyword">final</span> Object lock = <span class="keyword">new</span> Object();   </div><div class="line">        <span class="comment">//定义第一个线程，首先该线程拿到锁，而后等待3s,之后释放锁  </span></div><div class="line">        <span class="keyword">try</span> &#123;    </div><div class="line">            Thread t0 = <span class="keyword">new</span> Thread() &#123;    </div><div class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;    </div><div class="line">                    <span class="keyword">try</span> &#123;    </div><div class="line">                        <span class="keyword">synchronized</span> (lock) &#123;    </div><div class="line">                     System.out.println(<span class="string">"thread-&gt;"</span> + getName()  + <span class="string">" acquire lock."</span>);    </div><div class="line">                            sleep(<span class="number">3</span>*<span class="number">1000</span>);  </div><div class="line">                     System.out.println(<span class="string">"thread-&gt;"</span> + getName() + <span class="string">" 等待3s"</span>);  </div><div class="line">                     System.out.println(<span class="string">"thread-&gt;"</span> + getName()  + <span class="string">" release lock."</span>);    </div><div class="line">                        &#125;    </div><div class="line">                    &#125; <span class="keyword">catch</span> (Throwable ex) &#123;    </div><div class="line">                        System.out.println(<span class="string">"Caught in run: "</span> + ex);    </div><div class="line">                        ex.printStackTrace();    </div><div class="line">                    &#125;    </div><div class="line">                &#125;    </div><div class="line">            &#125;;    </div><div class="line">    </div><div class="line">            <span class="comment">//定义第二个线程，等待拿到锁对象  </span></div><div class="line">            Thread t1 = <span class="keyword">new</span> Thread() &#123;    </div><div class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;    </div><div class="line">                    <span class="keyword">synchronized</span> (lock) &#123;    </div><div class="line">                  System.out.println(<span class="string">"thread-&gt;"</span> + getName()  + <span class="string">" acquire lock."</span>);    </div><div class="line">                    &#125;    </div><div class="line">                &#125;    </div><div class="line">            &#125;;    </div><div class="line">            <span class="comment">//线程一先运行，先拿到lock  </span></div><div class="line">            t0.start();    </div><div class="line">            <span class="comment">//而后主线程等待100ms,为了做延迟  </span></div><div class="line">            Thread.sleep(<span class="number">100</span>);    </div><div class="line">            <span class="comment">//停止线程一  </span></div><div class="line">            <span class="comment">//t0.stop();  </span></div><div class="line">            <span class="comment">//这时候再开启线程二  </span></div><div class="line">            t1.start();    </div><div class="line">        &#125; <span class="keyword">catch</span> (Throwable t) &#123;    </div><div class="line">            System.out.println(<span class="string">"Caught in main: "</span> + t);    </div><div class="line">            t.printStackTrace();    </div><div class="line">        &#125;   </div><div class="line">    &#125;</div></pre></td></tr></table></figure>
 <p>​    运行结果如下：</p>
 <p><img src="http://osf4ctzpn.bkt.clouddn.com/%E7%BA%BF%E7%A8%8B1.png" alt=""></p>
-<p>​    当没有进行t0.stop()方法的调用时， 可以发现，两个线程争用锁的顺序是固定的。这个现象是正常的。现在，我们把t0.stop注释的哪行，删除注释，调用t0.stop()方法，运行结果如下：</p>
+<p>​    当没有进行t0.stop()方法的调用时，可以发现，两个线程争用锁的顺序是固定的。这个现象是正常的。现在，我们把t0.stop注释的哪行，删除注释，调用t0.stop()方法，运行结果如下：</p>
 <p><img src="http://osf4ctzpn.bkt.clouddn.com/%E7%BA%BF%E7%A8%8B2.png" alt=""></p>
-<p>​    可以看到，thread0抛出了java.lang.ThreadDeath错误。同时thread的lock被破坏掉了，只有</p>
-<p>thread1获得了lock。因为锁被破坏，所以当前线程可能是不安全的。</p>
-<p>​    破坏锁的例子可能还不够直观看出如何影响数据安全性。再来看另外一个例子：</p>
+<p>​    可以看到，thread0抛出了java.lang.ThreadDeath错误。同时thread的lock被破坏掉了，只有thread1获得了lock。因为锁被破坏，所以当前线程可能是不安全的。破坏锁的例子可能还不够直观看出如何影响数据安全性。再来看另外一个例子：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> test;</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">test</span> </span>&#123;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line">		dao dao = <span class="keyword">new</span> dao();</div><div class="line"></div><div class="line">		athread athread = <span class="keyword">new</span> athread(dao);</div><div class="line">		Thread thread1 = <span class="keyword">new</span> Thread(athread);</div><div class="line">		Thread thread2 = <span class="keyword">new</span> Thread(athread);</div><div class="line">      </div><div class="line">		thread1.start();</div><div class="line">      	<span class="comment">//通过主线程去 stop thread1!不可控</span></div><div class="line">		thread1.stop();</div><div class="line">		thread2.start();</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">dao</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="keyword">public</span> <span class="keyword">volatile</span> <span class="keyword">static</span> <span class="keyword">int</span> value;<span class="comment">//只能保证可见性，不能保证原子性</span></div><div class="line"></div><div class="line">  	<span class="comment">//靠内置锁来保证 value 的原子性</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">int</span> <span class="title">getValue</span><span class="params">(<span class="keyword">int</span> add)</span> </span>&#123;</div><div class="line"></div><div class="line">		value = value + add;</div><div class="line"></div><div class="line">		<span class="keyword">return</span> value;</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">athread</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</div><div class="line"></div><div class="line">	dao dao;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="title">athread</span><span class="params">(dao dao)</span> </span>&#123;</div><div class="line">		<span class="comment">// TODO Auto-generated constructor stub</span></div><div class="line">		<span class="keyword">this</span>.dao = dao;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="comment">// TODO Auto-generated method stub</span></div><div class="line">		System.out.println(dao.getValue(<span class="number">1</span>));</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>​    这里的 dao 应该是一个线程安全的类，如果不使用stop方法，输出永远是1和2。但是如果使用</p>
-<p>stop方法中断thread1，那么thread2的输出有时候会是1，有时候会是2。这说明stop导致线程不安</p>
-<p>全，出现了数据不同步的问题。</p>
-<p>​    问题解释清楚了，现在，就需要来找出解决问题的方法了。</p>
-<p>​    我们知道，stop() 方法是用抛出 ThreadDeath 异常来停止线程的。那么，我们自然而然会想到</p>
-<p>catch() ，那么问题就来了：为什么不能catch住ThreadDeath异常并fix它呢？</p>
-<p>​    答：理论上讲，也许可以，但是这会使编写正确的多线程代码的任务<strong>大大</strong>复杂化。由于两个原</p>
-<p>因，这项任务将几乎无法克服：</p>
+<p>​    这里的 dao 应该是一个线程安全的类，如果不使用stop方法，输出永远是1和2。但是如果使用stop方法中断thread1，那么thread2的输出有时候会是1，有时候会是2。这说明stop导致线程不安全，出现了数据不同步的问题。<br>    问题解释清楚了，现在，就需要来找出解决问题的方法了。</p>
+<p>​    我们知道，stop() 方法是用抛出 ThreadDeath 异常来停止线程的。那么，我们自然而然会想到catch() ，那么问题就来了：为什么不能catch住ThreadDeath异常并fix它呢？</p>
+<p>​    答：理论上讲，也许可以，但是这会使编写正确的多线程代码的任务<strong>大大</strong>复杂化。由于两个原因，这项任务将几乎无法克服：</p>
 <ol>
-<li><p>线程<strong>几乎可以在任何地方</strong>抛出<code>ThreadDeath</code>异常 。考虑到这一点，所有同步的方法和块都必须进</p>
-<p>行详细研究。</p>
+<li><p>线程<strong>几乎可以在任何地方</strong>抛出<code>ThreadDeath</code>异常 。考虑到这一点，所有同步的方法和块都必须进行详细研究。</p>
 </li>
-<li><p>一个线程可以<code>ThreadDeath</code>在清理第一个异常的同时抛出第二个异常（在<code>catch</code>或 <code>finally</code>子句</p>
-<p>中）。清理将不得不重复，直到成功。确保这一点的代码将非常复杂。</p>
+<li><p>一个线程可以<code>ThreadDeath</code>在清理第一个异常的同时抛出第二个异常（在<code>catch</code>或 <code>finally</code>子句中）。清理将不得不重复，直到成功。确保这一点的代码将非常复杂。</p>
 <p>总之，这是不切实际的。</p>
 </li>
 </ol>
-<p>没办法 fix，那就只能 deprecate。那么，到底应该如何正确地停止一个线程呢。我们先从释放锁的方</p>
-<p>式中筛选一下。</p>
+<p>没办法 fix，那就只能 deprecate。那么，到底应该如何正确地停止一个线程呢。我们先从释放锁的方式中筛选一下。</p>
 <h2 id="Java中多线程锁释放的三个条件"><a href="#Java中多线程锁释放的三个条件" class="headerlink" title="Java中多线程锁释放的三个条件"></a>Java中多线程锁释放的三个条件</h2><p>1）执行完同步代码块，就会释放锁。（synchronized）</p>
 <p>2）在执行同步代码块的过程中，遇到异常而导致线程终止，锁也会被释放。（exception）</p>
-<p>3）在执行同步代码块的过程中，执行了锁所属对象的wait()方法，这个线程会释放锁，进入对象的等</p>
-<p>​       待池。(wait)</p>
-<p>stop 方法释放锁就是上面的第二点，通过抛出异常来释放锁，通过前面的分析，我们知道了，这种方</p>
-<p>式其实是不安全的，不可靠的，也是及其危险的。</p>
+<p>3）在执行同步代码块的过程中，执行了锁所属对象的wait()方法，这个线程会释放锁，进入对象的等待池。(wait)</p>
+<p>stop 方法释放锁就是上面的第二点，通过抛出异常来释放锁，通过前面的分析，我们知道了，这种方<br>式其实是不安全的，不可靠的，也是及其危险的。</p>
 <p>​    因此，Java提供了一种用于<strong>正确停止线程的机制</strong>—-中断。</p>
 <h2 id="中断机制"><a href="#中断机制" class="headerlink" title="中断机制"></a>中断机制</h2><ul>
-<li><p>中断只是一种协作机制，Java没有给中断增加任何语法，中断的过程完全需要程序员自己实现。</p>
-<p>若要中断一个线程，你需要手动调用该线程的interrupted方法，该方法也仅仅是将线程对象的中</p>
-<p>断标识设成true；接着你需要自己写代码不断地检测当前线程的标识位；如果为true，表示别的</p>
-<p>线程要求这条线程中断，此时究竟该做什么需要你自己写代码实现。</p>
+<li><p>中断只是一种协作机制，Java没有给中断增加任何语法，中断的过程完全需要程序员自己实现。若要中断一个线程，你需要手动调用该线程的interrupted方法，该方法也仅仅是将线程对象的中断标识设成true；接着你需要自己写代码不断地检测当前线程的标识位；如果为true，表示别的线程要求这条线程中断，此时究竟该做什么需要你自己写代码实现。</p>
 </li>
-<li><p>每个线程对象中都有一个标识，用于表示线程是否被中断；该标识位为true表示中断，为false表</p>
-<p>示未中断；</p>
+<li><p>每个线程对象中都有一个标识，用于表示线程是否被中断；该标识位为true表示中断，为false表示未中断；</p>
 </li>
-<li><p>通过调用线程对象的interrupt方法将该线程的标识位设为true；可以在别的线程中调用，也可以</p>
-<p>在自己的线程中调用。</p>
+<li><p>通过调用线程对象的interrupt方法将该线程的标识位设为true；可以在别的线程中调用，也可以在自己的线程中调用。</p>
 </li>
 </ul>
 <h2 id="中断的相关方法"><a href="#中断的相关方法" class="headerlink" title="中断的相关方法"></a>中断的相关方法</h2><ul>
