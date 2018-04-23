@@ -18,7 +18,7 @@
 <meta property="og:url" content="http://Linkaiup.github.io/2018/04/23/线程核心问题一览/index.html">
 <meta property="og:site_name" content="HeyLin">
 <meta property="og:description" content="线程问题？了解一下">
-<meta property="og:updated_time" content="2018-04-23T07:41:26.707Z">
+<meta property="og:updated_time" content="2018-04-23T07:46:43.750Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="线程核心问题一览">
 <meta name="twitter:description" content="线程问题？了解一下">
@@ -97,34 +97,25 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#线程一览"><span class="toc-number">1.</span> <span class="toc-text">线程一览</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#线程核心问题一览"><span class="toc-number">1.1.</span> <span class="toc-text">线程核心问题一览</span></a></li></ol></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#线程核心问题一览"><span class="toc-number">1.</span> <span class="toc-text">线程核心问题一览</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是-Linux-线程"><span class="toc-number">1.1.</span> <span class="toc-text">什么是 Linux 线程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是-Linux-进程"><span class="toc-number">1.2.</span> <span class="toc-text">什么是 Linux 进程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#进程和线程之间的区别"><span class="toc-number">1.3.</span> <span class="toc-text">进程和线程之间的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#线程和线程之间的通信方式"><span class="toc-number">1.4.</span> <span class="toc-text">线程和线程之间的通信方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#进程和进程之间有哪几种通信方式"><span class="toc-number">1.5.</span> <span class="toc-text">进程和进程之间有哪几种通信方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#线程是如何切换的"><span class="toc-number">1.6.</span> <span class="toc-text">线程是如何切换的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何减少上下文切换？"><span class="toc-number">1.7.</span> <span class="toc-text">如何减少上下文切换？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#线程拥有哪些资源"><span class="toc-number">1.8.</span> <span class="toc-text">线程拥有哪些资源</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结"><span class="toc-number">2.</span> <span class="toc-text">总结</span></a></li></ol>
 		
 		</div>
 		
 		<p>线程问题？了解一下<br><a id="more"></a></p>
 <hr>
-<h1 id="线程一览"><a href="#线程一览" class="headerlink" title="线程一览"></a>线程一览</h1><hr>
-<h2 id="线程核心问题一览"><a href="#线程核心问题一览" class="headerlink" title="线程核心问题一览"></a>线程核心问题一览</h2><p>###什么是 Linux 线程</p>
-<p>​    一直以来，linux 内核并没有线程的概念。只能说是轻量级的进程，由用户态的 pthread 库实现的。使用 pthread 以后，在用户看来，每一个 task_struct 就对应一个线程，而一组线程以及它们所共同引用的一组资源就是一个进程。</p>
-<p>###什么是 Linux 进程</p>
-<p>​    每一个执行实体都是一个 task_struct 结构，通常称之为进程。进程，维护着执行相关的动态资源。同时，它又引用着程序所需的静态资源。<strong>系统调用 clone 创建子进程时，可以有选择性地让子进程共享父进程所引用的资源，这样的子进程通常称为轻量级进程。</strong></p>
-<p>​    linux 其上的线程就是基于轻量级进程，由用户态的 pthread 库实现的。</p>
-<p>###进程和线程之间的区别</p>
-<p>​    进程是程序的执行实例，而线程则是真正的执行实体。进程是资源分配的最小单位，而线程是操作系统调度执行的最小单位。进程有自己的地址空间，线程使用进程的地址空间，也就是说，进程里的资源，线程都是有权访问的，比如说堆啊，栈啊，静态存储区什么的。可以理解为，<strong>进程是一个资源管家，负责从主人那里要资源的话，那么线程就是干活的苦力</strong>。</p>
-<p>###线程和线程之间的通信方式</p>
-<ol>
-<li>锁机制：互斥锁、条件变量、读写锁</li>
-<li>信号量机制：无名和命名线程信号量</li>
-<li>信号机制。</li>
-</ol>
-<p>可以将上面三种类型的通信方式总结成两个名词：共享内存、消息传递。</p>
+<h1 id="线程核心问题一览"><a href="#线程核心问题一览" class="headerlink" title="线程核心问题一览"></a>线程核心问题一览</h1><h2 id="什么是-Linux-线程"><a href="#什么是-Linux-线程" class="headerlink" title="什么是 Linux 线程"></a>什么是 Linux 线程</h2><p>​　　一直以来，linux 内核并没有线程的概念。只能说是轻量级的进程，由用户态的 pthread 库实现的。使用 pthread 以后，在用户看来，每一个 task_struct 就对应一个线程，而一组线程以及它们所共同引用的一组资源就是一个进程。</p>
+<h2 id="什么是-Linux-进程"><a href="#什么是-Linux-进程" class="headerlink" title="什么是 Linux 进程"></a>什么是 Linux 进程</h2><p>​　　每一个执行实体都是一个 task_struct 结构，通常称之为进程。进程，维护着执行相关的动态资源。同时，它又引用着程序所需的静态资源。<strong>系统调用 clone 创建子进程时，可以有选择性地让子进程共享父进程所引用的资源，这样的子进程通常称为轻量级进程。</strong></p>
+<p>​　　linux 其上的线程就是基于轻量级进程，由用户态的 pthread 库实现的。</p>
+<h2 id="进程和线程之间的区别"><a href="#进程和线程之间的区别" class="headerlink" title="进程和线程之间的区别"></a>进程和线程之间的区别</h2><p>​　　进程是程序的执行实例，而线程则是真正的执行实体。进程是资源分配的最小单位，而线程是操作系统调度执行的最小单位。进程有自己的地址空间，线程使用进程的地址空间，也就是说，进程里的资源，线程都是有权访问的，比如说堆啊，栈啊，静态存储区什么的。可以理解为，<strong>进程是一个资源管家，负责从主人那里要资源的话，那么线程就是干活的苦力</strong>。</p>
+<h2 id="线程和线程之间的通信方式"><a href="#线程和线程之间的通信方式" class="headerlink" title="线程和线程之间的通信方式"></a>线程和线程之间的通信方式</h2><p>　　1. 锁机制：互斥锁、条件变量、读写锁<br>　　2. 信号量机制：无名和命名线程信号量<br>　　3. 信号机制。</p>
+<p>　　可以将上面三种类型的通信方式总结成两个名词：共享内存、消息传递。</p>
 <ol>
 <li><p>共享内存（eg：volatile）</p>
-<p>​    对于使用 volatile 修饰的的字段，<strong>由于变量在寄存器（工作内存）中的值是不确定的，程序任何对该变量的访问均需要从共享内存中获取，</strong>对它的改变也必须同步刷新回共享内存，它能保证所有线程对变量访问的可见性。由于所有对 volatile 变量的访问和修改都需要以共享内存为准，因此，线程安全性得以保障。但要注意，过多的使用volatile 是不必要的，因为它会降低程序执行的效率。</p>
+<p>　　对于使用 volatile 修饰的的字段，<strong>由于变量在寄存器（工作内存）中的值是不确定的，程序任何对该变量的访问均需要从共享内存中获取，</strong>对它的改变也必须同步刷新回共享内存，它能保证所有线程对变量访问的可见性。由于所有对 volatile 变量的访问和修改都需要以共享内存为准，因此，线程安全性得以保障。但要注意，过多的使用volatile 是不必要的，因为它会降低程序执行的效率。</p>
 </li>
 <li><p>消息传递（eg：synchronized ）</p>
-<p>​    对于 synchronized ，可修饰方法或同步块。<strong>它主要是确保多个线程在同一时刻，只能有一个线程处于方法或者同步块中，保证了线程对变量访问的可见性和排他性</strong>。其原理是对一个对象的监视器进行获取，同一时刻只能有一个线程获取到由  synchronized 所保护对象的监视器，没有获取到监视器的线程将会被阻塞在同步块或同步方法的入口处，进入 BLOCKED 状态，当访问 Object 的前驱（获得锁的线程） 释放了锁，就会唤醒阻塞在<strong>同步队列</strong>中的线程，使其重新尝试对监视器的获取。</p>
-<p>​    使用示例（经典范式：等待/通知机制）：</p>
+<p>​　　对于 synchronized ，可修饰方法或同步块。<strong>它主要是确保多个线程在同一时刻，只能有一个线程处于方法或者同步块中，保证了线程对变量访问的可见性和排他性</strong>。其原理是对一个对象的监视器进行获取，同一时刻只能有一个线程获取到由  synchronized 所保护对象的监视器，没有获取到监视器的线程将会被阻塞在同步块或同步方法的入口处，进入 BLOCKED 状态，当访问 Object 的前驱（获得锁的线程） 释放了锁，就会唤醒阻塞在<strong>同步队列</strong>中的线程，使其重新尝试对监视器的获取。</p>
+<p>​　　使用示例（经典范式：等待/通知机制）：</p>
 <ul>
 <li>等待方：</li>
 </ul>
@@ -135,21 +126,16 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">范式：</div><div class="line"><span class="keyword">synchronized</span>(对象)&#123;</div><div class="line">  改变条件</div><div class="line">  对象.notifyAll();</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">eg:</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">assign</span><span class="params">()</span> </span>&#123;</div><div class="line"><span class="keyword">while</span> (available) &#123;</div><div class="line">            <span class="keyword">try</span> &#123;</div><div class="line">                wait();</div><div class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        available = <span class="keyword">true</span>;</div><div class="line">        notifyAll();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 </li>
 </ol>
-<p>###进程和进程之间有哪几种通信方式</p>
-<p>​　　管道、有名管道、信号量、消息队列、信号、共享内存、套接字。</p>
-<p>###线程是如何切换的</p>
-<p>​　　CPU通过时间片分配算法来循环执行任务，当前任务执行一个时间片后会切换到下一个任务。但是，在切换前会保存上一个任务的状态，以便下次切换回这个任务时，可以再加载这个任务的状态。任务从保存到再加载的过程就是一次上下文切换。当CPU从执行一个线程切换到执行另外一个线程的时候，它需要先存储当前线程的本地的数据，程序指针等，然后载入另一个线程的本地数据，程序指针等，最后才开始执行。这种切换称为“上下文切换”(“context switch”)。CPU会在一个上下文中执行一个线程，然后切换到另外一个上下文中执行另外一个线程。上下文切换并不廉价，是比较耗时的。</p>
-<p>###如何减少上下文切换？</p>
-<ol>
+<h2 id="进程和进程之间有哪几种通信方式"><a href="#进程和进程之间有哪几种通信方式" class="headerlink" title="进程和进程之间有哪几种通信方式"></a>进程和进程之间有哪几种通信方式</h2><p>​　　管道、有名管道、信号量、消息队列、信号、共享内存、套接字。</p>
+<h2 id="线程是如何切换的"><a href="#线程是如何切换的" class="headerlink" title="线程是如何切换的"></a>线程是如何切换的</h2><p>​　　CPU通过时间片分配算法来循环执行任务，当前任务执行一个时间片后会切换到下一个任务。但是，在切换前会保存上一个任务的状态，以便下次切换回这个任务时，可以再加载这个任务的状态。任务从保存到再加载的过程就是一次上下文切换。当CPU从执行一个线程切换到执行另外一个线程的时候，它需要先存储当前线程的本地的数据，程序指针等，然后载入另一个线程的本地数据，程序指针等，最后才开始执行。这种切换称为“上下文切换”(“context switch”)。CPU会在一个上下文中执行一个线程，然后切换到另外一个上下文中执行另外一个线程。上下文切换并不廉价，是比较耗时的。</p>
+<h2 id="如何减少上下文切换？"><a href="#如何减少上下文切换？" class="headerlink" title="如何减少上下文切换？"></a>如何减少上下文切换？</h2><ol>
 <li>无锁并发编程</li>
 <li>CAS算法（<strong>Atomic包</strong>）</li>
 <li>使用最少线程</li>
 <li>协程</li>
 </ol>
-<p>###线程拥有哪些资源</p>
-<p>​　　栈内存是每个线程私有的，保存线程的运行状态和局部自动变量。栈在线程开始时就初始化，每个线程的栈相互独立。线程也拥有堆内存，但是堆内存是大家共有的空间。堆在操作系统对进程初始化的时候分配，用完之后要归还，不然就是内存泄漏。</p>
-<p>###总结</p>
-<p>　　线程问题那么多，是不可能讲完的。只能靠着再多看几遍书来维持一下自己的颜面。后面还会继续完善线程问题的内容。<br>　　若有不足，还请指正。</p>
+<h2 id="线程拥有哪些资源"><a href="#线程拥有哪些资源" class="headerlink" title="线程拥有哪些资源"></a>线程拥有哪些资源</h2><p>​　　栈内存是每个线程私有的，保存线程的运行状态和局部自动变量。栈在线程开始时就初始化，每个线程的栈相互独立。线程也拥有堆内存，但是堆内存是大家共有的空间。堆在操作系统对进程初始化的时候分配，用完之后要归还，不然就是内存泄漏。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>　　线程问题那么多，是不可能讲完的。只能靠着再多看几遍书来维持一下自己的颜面。后面还会继续完善线程问题的内容。<br>　　若有不足，还请指正。</p>
 <p style="center"><br> <span id="busuanzi_container_page_pv"><br>  本文总阅读量<span id="busuanzi_value_page_pv"></span>次<br></span><br></p>  
 	</div>
 		<footer class="article-footer clearfix">
