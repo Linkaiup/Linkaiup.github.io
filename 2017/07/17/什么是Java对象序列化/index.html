@@ -18,7 +18,7 @@
 <meta property="og:url" content="http://Linkaiup.github.io/2017/07/17/什么是Java对象序列化/index.html">
 <meta property="og:site_name" content="HeyLin">
 <meta property="og:description" content="当两个进程在进行远程通信时，彼此可以发送各种类型的数据。数据以二进制序列的形式在网络上传送。发送方需要把这个Java对象转换为字节序列，才能在网络上传送；接收方则需要把字节序列再恢复为Java对象，才能接收到信息。那么，如何把Java对象转换为字节序列呢？">
-<meta property="og:updated_time" content="2018-01-28T04:49:11.598Z">
+<meta property="og:updated_time" content="2018-06-21T08:20:33.712Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="什么是Java对象序列化">
 <meta name="twitter:description" content="当两个进程在进行远程通信时，彼此可以发送各种类型的数据。数据以二进制序列的形式在网络上传送。发送方需要把这个Java对象转换为字节序列，才能在网络上传送；接收方则需要把字节序列再恢复为Java对象，才能接收到信息。那么，如何把Java对象转换为字节序列呢？">
@@ -97,17 +97,16 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#什么是Java对象序列化"><span class="toc-number">1.</span> <span class="toc-text">什么是Java对象序列化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1、含义"><span class="toc-number">1.1.</span> <span class="toc-text">1、含义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2、条件"><span class="toc-number">1.2.</span> <span class="toc-text">2、条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3、作用"><span class="toc-number">1.3.</span> <span class="toc-text">3、作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4、使用"><span class="toc-number">1.4.</span> <span class="toc-text">4、使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5、关于自定义序列化"><span class="toc-number">1.5.</span> <span class="toc-text">5、关于自定义序列化</span></a></li></ol></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#含义"><span class="toc-number">1.</span> <span class="toc-text">含义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#条件"><span class="toc-number">2.</span> <span class="toc-text">条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#作用"><span class="toc-number">3.</span> <span class="toc-text">作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用"><span class="toc-number">4.</span> <span class="toc-text">使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5、关于自定义序列化"><span class="toc-number">5.</span> <span class="toc-text">5、关于自定义序列化</span></a></li></ol>
 		
 		</div>
 		
 		<p>当两个进程在进行远程通信时，彼此可以发送各种类型的数据。数据以二进制序列的形式在网络上传送。发送方需要把这个Java对象转换为字节序列，才能在网络上传送；接收方则需要把字节序列再恢复为Java对象，才能接收到信息。那么，如何把Java对象转换为字节序列呢？<br><a id="more"></a></p>
 <hr>
-<h1 id="什么是Java对象序列化"><a href="#什么是Java对象序列化" class="headerlink" title="什么是Java对象序列化"></a>什么是Java对象序列化</h1><hr>
-<h2 id="1、含义"><a href="#1、含义" class="headerlink" title="1、含义"></a>1、含义</h2><p>　　当两个进程在进行远程通信时，彼此可以发送各种类型的数据。数据以二进制序列的形式在网络上传送。发送方需要把这个Java对象转换为字节序列，才能在网络上传送；接收方则需要把字节序列再恢复为Java对象，才能接收到信息。</p>
-<h2 id="2、条件"><a href="#2、条件" class="headerlink" title="2、条件"></a>2、条件</h2><p>　　若需要让某个对象支持序列化机制，则必须让它的类可序列化。必须实现如下两接口之一<br>　　1）、Seriallizable(常用)<br>　　2）、Externalizable<br>　　<br>　　建议：程序创建每个JavaBean类都实现Serializable。</p>
-<h2 id="3、作用"><a href="#3、作用" class="headerlink" title="3、作用"></a>3、作用</h2><p>　　把内存中的Java对象转换成平台无关的二进制流，从而允许把这种二进制流持久地保存在磁盘上，有网络时就可以将二进制流传输到另一个网络节点</p>
-<h2 id="4、使用"><a href="#4、使用" class="headerlink" title="4、使用"></a>4、使用</h2><p>　　废话少说，下面我们来看看怎么使用序列化</p>
+<h2 id="含义"><a href="#含义" class="headerlink" title="含义"></a>含义</h2><p>　　当两个进程在进行远程通信时，彼此可以发送各种类型的数据。数据以二进制序列的形式在网络上传送。发送方需要把这个Java对象转换为字节序列，才能在网络上传送；接收方则需要把字节序列再恢复为Java对象，才能接收到信息。</p>
+<h2 id="条件"><a href="#条件" class="headerlink" title="条件"></a>条件</h2><p>　　若需要让某个对象支持序列化机制，则必须让它的类可序列化。必须实现如下两接口之一<br>　　1）、Seriallizable(常用)<br>　　2）、Externalizable<br>　　<br>　　建议：程序创建每个JavaBean类都实现Serializable。</p>
+<h2 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h2><p>　　把内存中的Java对象转换成平台无关的二进制流，从而允许把这种二进制流持久地保存在磁盘上，有网络时就可以将二进制流传输到另一个网络节点</p>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>　　废话少说，下面我们来看看怎么使用序列化</p>
 <p>　　1）、使用对象流实现序列化<br>　　　使用Serializable来实现序列化非常简单，主要让目标类实现Serializable标记接口即可，无须实现任何方法。程序可通过如下两步骤序列化一个对象：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//（1）、创建个输出流</span></div><div class="line">ObjectOutputStream oos = <span class="keyword">new</span> ObjectOutputStream( <span class="keyword">new</span> FileOutputStream(<span class="string">"object.java"</span>));</div><div class="line"><span class="comment">//（2）、调用输出流的writeObject()方法输出可序列化对象</span></div><div class="line">oos.writeObject(per);</div></pre></td></tr></table></figure></p>
 <p>　　下面来看实际中的应用：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//先创建一个Person类</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span></div><div class="line">		<span class="keyword">implements</span> <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span></div><div class="line">&#123;</div><div class="line">	<span class="keyword">private</span> String name;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> age;</div><div class="line">	<span class="comment">//有参构造器</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="title">Person</span><span class="params">(String name,<span class="keyword">int</span> age)</span></span></div><div class="line">	&#123;</div><div class="line">		System.out.println(<span class="string">"有参数的构造器"</span>);</div><div class="line">		<span class="keyword">this</span>.name=name;</div><div class="line">		<span class="keyword">this</span>.age=age;</div><div class="line">	&#125;</div><div class="line">	<span class="comment">//name和age的getter和setter方法</span></div><div class="line">	...</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//将一个Person对象写入磁盘文件，即序列化</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WriteObject</span></span></div><div class="line">&#123;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span></div><div class="line">	&#123;</div><div class="line">		<span class="keyword">try</span>(<span class="comment">//在退出虚拟机时就可以清掉这些打开的资源了</span></div><div class="line">			ObjectOutputStream oos = <span class="keyword">new</span> ObjectOutputStream(</div><div class="line">							<span class="keyword">new</span> FileOutputStream(<span class="string">"object.txt"</span>)))</div><div class="line">		&#123;</div><div class="line">			Person per = <span class="keyword">new</span> Person(<span class="string">"linkai"</span>,<span class="number">100</span>);</div><div class="line">			<span class="comment">//将Person对象写入输出流</span></div><div class="line">			oos.writeObject(per);</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">catch</span>(IOException ex)</div><div class="line">		&#123;</div><div class="line">			ex.printStackTrace();</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;	</div><div class="line"></div><div class="line"><span class="comment">//从磁盘文件读写一个Person对象，即反序列化</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ReadObject</span></span></div><div class="line">&#123;</div><div class="line">	 <span class="keyword">try</span>(<span class="comment">//同上，称为自动关闭资源</span></div><div class="line">		 <span class="comment">//创建一个输出流</span></div><div class="line">		ObjectInputStream ois = <span class="keyword">new</span> ObjectInputStream(<span class="keyword">new</span> FileInputStream(<span class="string">"object.txt"</span>)))</div><div class="line">		&#123;</div><div class="line">			Person p = (Person)ois.readObject();<span class="comment">//从磁盘文件反序列化出一对象，强转为Person类型</span></div><div class="line">			<span class="comment">//当反序列化找不到对应的Java类时将会抛出ClassNotFoundException异常</span></div><div class="line">			System.out.println(<span class="string">"名称为"</span>+p.getname()+<span class="string">"年龄为："</span>+p.getage());</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">catch</span>(Exception ex)</div><div class="line">		&#123;</div><div class="line">			ex.printStackTrace();</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <p>　　以上就是序列化和反序列化的基础实现。还有一点需要指出：Person类构造器中的有参构造器中有一句普通的打印语句，但是反序列化时并没有该语句打印输出，这说明了什么呢？<strong>说明反序列化机制无须通过构造器来初始化Java对象</strong><br>　　另外，若使用序列化机制向文件中写入了多个Java对象，使用反序列化机制恢复对象时必须按实际写入顺序读取。<br>　　<br>　　2）、对象引用的序列化<br>　　　　　<br>　　　前面介绍的Person类的两个对象分别是String和int类型，如果某个成员变量是引用类型，则该引用类型有没有什么要求呢？答案是肯定的，该引用类型也必须是可序列化的。否则，拥有该类型成员变量的类也是不可序列化的。<br>　　　<br>　Java为了保持Java序列化机制的初衷——避免重复序列化相同的对象，采用了一种特殊的算法，下面我们来看看它的内容：</p>
@@ -219,6 +218,17 @@
 </div>
 
   
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/生活随记/" title="生活随记">生活随记<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
 
   
 <div class="tagslist">
@@ -235,6 +245,10 @@
 		
 			
 				<li><a href="/tags/Java进阶/" title="Java进阶">Java进阶<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/life/" title="life">life<sup>1</sup></a></li>
 			
 		
 			
