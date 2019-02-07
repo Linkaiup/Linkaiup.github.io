@@ -1,0 +1,780 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>mysql | HeyLin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="LinKai">
+    
+
+    
+    <meta name="description" content="复习阶段第三弹，Mysql知识系列整理。详见正文解析…">
+<meta name="keywords" content="Mysql">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mysql">
+<meta property="og:url" content="http://Linkaiup.github.io/2019/02/07/mysql/index.html">
+<meta property="og:site_name" content="HeyLin">
+<meta property="og:description" content="复习阶段第三弹，Mysql知识系列整理。详见正文解析…">
+<meta property="og:updated_time" content="2019-02-07T06:14:14.356Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="mysql">
+<meta name="twitter:description" content="复习阶段第三弹，Mysql知识系列整理。详见正文解析…">
+
+    
+    <link rel="alternative" href="atom.xml" title="HeyLin" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/profile.png">
+    <link rel="apple-touch-icon-precomposed" href="/img/profile.png">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HeyLin" title="HeyLin"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HeyLin">HeyLin</a></h1>
+				<h2 class="blog-motto">Remember to sow in the spring.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:Linkaiup.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2019/02/07/mysql/" title="mysql" itemprop="url">mysql</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="LinKai" target="_blank" itemprop="author">LinKai</a>
+		
+  <p class="article-time">
+    <time datetime="2019-02-07T04:40:42.000Z" itemprop="datePublished"> 发表于 2019-02-07</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#SQL"><span class="toc-number">1.</span> <span class="toc-text">SQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#执行SQL语句的方式"><span class="toc-number">2.</span> <span class="toc-text">执行SQL语句的方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#管理结果集"><span class="toc-number">3.</span> <span class="toc-text">管理结果集</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用连接池管理数据库连接"><span class="toc-number">4.</span> <span class="toc-text">使用连接池管理数据库连接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#InnoDB（Mysql-默认的事务型存储引擎）"><span class="toc-number">5.</span> <span class="toc-text">InnoDB（Mysql 默认的事务型存储引擎）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#行格式"><span class="toc-number">5.1.</span> <span class="toc-text">行格式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MyISAM"><span class="toc-number">6.</span> <span class="toc-text">MyISAM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#两引擎对比"><span class="toc-number">7.</span> <span class="toc-text">两引擎对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#索引"><span class="toc-number">8.</span> <span class="toc-text">索引</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MYSQL-时间数据类型"><span class="toc-number">9.</span> <span class="toc-text">MYSQL 时间数据类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Mysql-支持的事务隔离级别"><span class="toc-number">10.</span> <span class="toc-text">Mysql 支持的事务隔离级别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#悲观锁和乐观锁的原理和应用场景"><span class="toc-number">11.</span> <span class="toc-text">悲观锁和乐观锁的原理和应用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数据库切分"><span class="toc-number">12.</span> <span class="toc-text">数据库切分</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#水平切"><span class="toc-number">12.1.</span> <span class="toc-text">水平切</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#垂直切"><span class="toc-number">12.2.</span> <span class="toc-text">垂直切</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#全文索引"><span class="toc-number">13.</span> <span class="toc-text">全文索引</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#全文检索模式（中文，从-5-7-6-开始）"><span class="toc-number">13.1.</span> <span class="toc-text">全文检索模式（中文，从 5.7.6 开始）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#注意事项"><span class="toc-number">13.2.</span> <span class="toc-text">注意事项</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<p>复习阶段第三弹，Mysql知识系列整理。详见正文解析…<br><a id="more"></a></p>
+<hr>
+<h2 id="SQL"><a href="#SQL" class="headerlink" title="SQL"></a>SQL</h2><ol>
+<li><p>SQL语句基础</p>
+<ol>
+<li>查询语句：select，功能最丰富的语句</li>
+<li>DML语句(数据操作)：insert、update、delete</li>
+<li>DDL语句(数据定义)：creat、alter(修改表结构)、drop、truncate</li>
+<li>DCL语句(数据控制)：grant、revoke</li>
+<li>事务控制语句：commit、rollback、savepoint</li>
+</ol>
+</li>
+<li>DDL语句语法</li>
+<li>DML语句语法</li>
+</ol>
+<blockquote>
+<p>truncate 和 delete 的区别？</p>
+</blockquote>
+<ol>
+<li>delete 语句是数据库操作语言(dml)，这个操作会放到 rollback segement 中，事务提交之后才生效；如果有相应的 trigger，执行的时候将被触发。truncate、drop 是数据库定义语言(ddl)，操作立即生效，原数据不放到 rollback segment 中，不能回滚，操作不触发 trigger。</li>
+<li>delete 语句不影响表所占用的 extent，高水线(high watermark)保持原位置不动<br>drop 语句将表所占用的空间全部释放。truncate 语句缺省情况下见空间释放到 minextents个 extent，除非使用reuse storage；truncate 会将高水线复位(回到最开始)。</li>
+<li>速度：truncate快</li>
+<li>delete是DML语句,不会自动提交。drop/truncate都是DDL语句,执行后会自动提交。</li>
+<li>小心使用 drop 和 truncate，尤其没有备份的时候。否则哭都来不及</li>
+<li>TRUNCATE   TABLE   在功能上与不带   WHERE   子句的   DELETE   语句相同：二者均删除表中的全部行。但   TRUNCATE   TABLE   比   DELETE   速度快，且使用的系统和事务日志资源少。DELETE   语句每次删除一行，并在事务日志中为所删除的每行记录一项。TRUNCATE   TABLE   通过释放存储表数据所用的数据页来删除数据，并且只在事务日志中记录页的释放。 </li>
+<li>TRUNCATE   TABLE   删除表中的所有行，但表结构及其列、约束、索引等保持不变。新行标识所用的计数值重置为该列的种子。如果想保留标识计数值，请改用   DELETE。如果要删除表定义及其数据，请使用   DROP   TABLE   语句。</li>
+<li>对于由   FOREIGN   KEY   约束引用的表，不能使用   TRUNCATE   TABLE，而应使用不带   WHERE   子句的   DELETE   语句。由于   TRUNCATE   TABLE   不记录在日志中，所以它不能激活触发器。</li>
+<li>TRUNCATE   TABLE   不能用于参与了索引视图的表。</li>
+</ol>
+<h2 id="执行SQL语句的方式"><a href="#执行SQL语句的方式" class="headerlink" title="执行SQL语句的方式"></a>执行SQL语句的方式</h2><ul>
+<li><p>使用Java8新增的executeLargeUpdate方法执行DDL和DML语句</p>
+</li>
+<li><p>使用execute方法执行SQL语句</p>
+</li>
+<li><p>PreparedStatement 执行SQL语句</p>
+</li>
+<li><p>CallableStatement 调用存储过程</p>
+</li>
+</ul>
+<h2 id="管理结果集"><a href="#管理结果集" class="headerlink" title="管理结果集"></a>管理结果集</h2><ul>
+<li><p>可滚动、可更新的结果集</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">PreparedStatement ps=conn.prepareStatement(sql,ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);</div><div class="line">ResultSet rs=ps.executeQuery();</div><div class="line">rs.last();</div><div class="line">rs.updateString(<span class="number">2</span>,<span class="string">"xxx"</span>+<span class="number">8</span>);</div><div class="line">rs.updateRow();</div></pre></td></tr></table></figure>
+</li>
+<li><p>处理Blob类型数据</p>
+</li>
+<li><p>ResultSetMetaDate分析结果集</p>
+</li>
+</ul>
+<h2 id="使用连接池管理数据库连接"><a href="#使用连接池管理数据库连接" class="headerlink" title="使用连接池管理数据库连接"></a>使用连接池管理数据库连接</h2><ul>
+<li><p>DBCP</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//创建数据源对象</span></div><div class="line">BasicDataSource ds=<span class="keyword">new</span> BasicDataSource();</div><div class="line"><span class="comment">//设置连接池所需的驱动</span></div><div class="line">ds.setDriverClassName(<span class="string">"com.mysql.jdbc.Driver"</span>);</div><div class="line"><span class="comment">//设置数据库的URl</span></div><div class="line">ds.setUrl(<span class="string">"jdbc:mysql://locathost:3306/javaee"</span>);</div><div class="line"><span class="comment">//设置连接数据库的用户名</span></div><div class="line">ds.setUsername(<span class="string">"root"</span>);</div><div class="line"><span class="comment">//设置密码</span></div><div class="line">ds.setPassword(<span class="string">"xx"</span>);</div><div class="line"><span class="comment">//设置连接池初始连接数</span></div><div class="line">ds.setInitialSize(<span class="number">5</span>);</div><div class="line"></div><div class="line">ds.setMaxActive(<span class="number">20</span>);</div><div class="line"></div><div class="line">ds.setMinIdle(<span class="number">2</span>);</div><div class="line"></div><div class="line"><span class="comment">//通过数据源获取数据库连接</span></div><div class="line">Connection conn=ds.getConnection();</div><div class="line"></div><div class="line"><span class="comment">//用完后记得关掉</span></div><div class="line">conn.close();</div></pre></td></tr></table></figure>
+</li>
+<li><p>C3P0</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//C3P0创建连接池实例</span></div><div class="line">ComboPooledDataSource ds= <span class="keyword">new</span> CoboPooledDataSource();</div><div class="line"><span class="comment">//下面与上面的都相同了</span></div></pre></td></tr></table></figure>
+<ul>
+<li><p>C3P0xml配置实例</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version="1.0"encoding="UTF-8"?&gt;</div><div class="line"><span class="tag">&lt;<span class="name">c3p0-config</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">default-config</span>&gt;</span></div><div class="line">       <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"automaticTestTable"</span>&gt;</span>con_test<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">       <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"checkoutTimeout"</span>&gt;</span>30000<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">       <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"idleConnectionTestPeriod"</span>&gt;</span>30<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">       <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"initialPoolSize"</span>&gt;</span>10<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">       <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"maxIdleTime"</span>&gt;</span>30<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">       <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"maxPoolSize"</span>&gt;</span>100<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">       <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"minPoolSize"</span>&gt;</span>10<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">       <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"maxStatements"</span>&gt;</span>200<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">       <span class="tag">&lt;<span class="name">user-overrides</span> <span class="attr">user</span>=<span class="string">"test-user"</span>&gt;</span></div><div class="line">           <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"maxPoolSize"</span>&gt;</span>10<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">           <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"minPoolSize"</span>&gt;</span>1<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">           <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"maxStatements"</span>&gt;</span>0<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">       <span class="tag">&lt;/<span class="name">user-overrides</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">default-config</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">named-config</span> <span class="attr">name</span>=<span class="string">"toto"</span>&gt;</span></div><div class="line">       <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"initialPoolSize"</span>&gt;</span>5<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">       <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"maxPoolSize"</span>&gt;</span>20<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">       <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"driverClass"</span>&gt;</span>com.mysql.jdbc.Driver<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">       <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"jdbcUrl"</span>&gt;</span>jdbc:mysql://localhost:3306/day14<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">       <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"user"</span>&gt;</span>root<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">       <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"password"</span>&gt;</span>123456<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">named-config</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">c3p0-config</span>&gt;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>c3p0的JdbcUtil.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> cn.toto.utils;</div><div class="line"> </div><div class="line"><span class="keyword">import</span> java.sql.Connection;</div><div class="line"><span class="keyword">import</span> java.sql.ResultSet;</div><div class="line"><span class="keyword">import</span> java.sql.SQLException;</div><div class="line"><span class="keyword">import</span> java.sql.Statement;</div><div class="line"> </div><div class="line"><span class="keyword">import</span> javax.sql.DataSource;</div><div class="line"> </div><div class="line"><span class="keyword">import</span> com.mchange.v2.c3p0.ComboPooledDataSource;</div><div class="line"> </div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JdbcUtils</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> DataSourceds;</div><div class="line">   </div><div class="line">    <span class="keyword">static</span> &#123;</div><div class="line">       <span class="comment">//ds = new ComboPooledDataSource();//默认的缺省的配置</span></div><div class="line">       ds = <span class="keyword">new</span> ComboPooledDataSource(<span class="string">"toto"</span>);<span class="comment">//配置文件中设置的内容不用写其他的是因为它可以自动查找classloader下的c3p0-config.xml文件（要注意的是文件的名称必须是c3p0-config.xml）如果文件的名称不是这个，将出现错误。</span></div><div class="line">    &#125;</div><div class="line">   </div><div class="line">    <span class="comment">//获取与指定数据的连接</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="title">DataSourcegetSource</span><span class="params">()</span></span>&#123;</div><div class="line">       <span class="keyword">return</span> ds;</div><div class="line">    &#125;</div><div class="line">   </div><div class="line">    <span class="comment">//获得与指定数据库的连接</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Connection <span class="title">getConnection</span><span class="params">()</span> <span class="keyword">throws</span> SQLException </span>&#123;</div><div class="line">       <span class="comment">//从连接池返回一个连接</span></div><div class="line">       <span class="keyword">return</span> ds.getConnection();</div><div class="line">    &#125;</div><div class="line">    <span class="comment">//释放资源</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">release</span><span class="params">(ResultSet rs,Statement stmt,Connection conn)</span> </span>&#123;</div><div class="line">       <span class="keyword">if</span>(rs!=<span class="keyword">null</span>)&#123;</div><div class="line">           <span class="keyword">try</span>&#123;</div><div class="line">              rs.close();</div><div class="line">           &#125;<span class="keyword">catch</span>(SQLException e)&#123;</div><div class="line">              e.printStackTrace();</div><div class="line">           &#125;</div><div class="line">           rs = <span class="keyword">null</span>;</div><div class="line">       &#125;</div><div class="line">       <span class="keyword">if</span>(stmt!=<span class="keyword">null</span>)&#123;</div><div class="line">           <span class="keyword">try</span>&#123;</div><div class="line">              stmt.close();</div><div class="line">           &#125;<span class="keyword">catch</span>(SQLException e)&#123;</div><div class="line">              e.printStackTrace();</div><div class="line">           &#125;</div><div class="line">           stmt=<span class="keyword">null</span>;</div><div class="line">       &#125;</div><div class="line">       <span class="keyword">if</span>(conn!=<span class="keyword">null</span>)&#123;</div><div class="line">           <span class="keyword">try</span>&#123;</div><div class="line">              conn.close();</div><div class="line">           &#125;<span class="keyword">catch</span>(SQLException e)&#123;</div><div class="line">              e.printStackTrace();</div><div class="line">           &#125;</div><div class="line">           conn = <span class="keyword">null</span>;</div><div class="line">       &#125;</div><div class="line">    &#125;</div><div class="line"> </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="InnoDB（Mysql-默认的事务型存储引擎）"><a href="#InnoDB（Mysql-默认的事务型存储引擎）" class="headerlink" title="InnoDB（Mysql 默认的事务型存储引擎）"></a>InnoDB（Mysql 默认的事务型存储引擎）</h2><h3 id="行格式"><a href="#行格式" class="headerlink" title="行格式"></a>行格式</h3><ol>
+<li><p><code>Compact</code>、<code>Redundant</code>、<code>Dynamic</code>和<code>Compressed</code></p>
+</li>
+<li><p>行溢出数据。对于<code>VARCHAR(M)</code>类型的列最多可以占用<code>65535</code>个字节。其中的<code>M</code>代表该类型最多存储的字符数量，如果我们使用<code>ascii</code>字符集的话，一个字符就代表一个字节。但是<code>VARCHAR(65535)</code>并不可用：因为这个<code>65535</code>个字节除了列本身的数据之外，还包括一些<code>storage overhead</code>：1、真实数据。2、真实数据占用字节的长度。3、NULL 值标识，如果该列有<code>NOT NULL</code>属性则可以没有这部分存储空间。如果该<code>VARCHAR</code>类型的列没有<code>NOT NULL</code>属性，那最多只能存储<code>65532</code>个字节的数据，因为真实数据的长度需要占用2个字节，<code>NULL</code>值标识需要占用1个字节。如果<code>VARCHAR</code>类型的列有<code>NOT NULL</code>属性，那最多只能存储<code>65533</code>个字节的数据。</p>
+</li>
+<li><p>如果<code>VARCHAR(M)</code>类型的列使用的不是<code>ascii</code>字符集，那<code>M</code>的最大取值取决于该字符集表示一个字符最多需要的字节数。比方说<code>gbk</code>字符集表示一个字符最多需要<code>2</code>个字符，那在该字符集下，<code>M</code>的最大取值就是<code>32767</code>，也就是说最多能存储<code>32767</code>个字符；<code>utf8</code>字符集表示一个字符最多需要<code>3</code>个字符，那在该字符集下，<code>M</code>的最大取值就是<code>21845</code>，也就是说最多能存储<code>21845</code>个字符。</p>
+</li>
+<li><p>页是<code>MySQL</code>中磁盘和内存交互的基本单位，也是<code>MySQL</code>是管理存储空间的基本单位。</p>
+</li>
+<li><p>指定和修改行格式的语法如下：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> 表名 (列的信息) ROW_FORMAT=行格式名称</div><div class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> 表名 ROW_FORMAT=行格式名称</div></pre></td></tr></table></figure>
+</li>
+<li><p>一个页一般是<code>16KB</code>，当记录中的数据太多，当前页放不下的时候，会把多余的数据存储到其他页中，这种现象称为<code>行溢出</code>。</p>
+</li>
+<li><p>InnoDB 数据页：7个组成部分，知道了各个数据页可以组成一个<code>双向链表</code>，而每个数据页中的记录又可以组成一个<code>单向链表</code>，每个数据页都会为存储在它里边儿的记录生成一个<code>页目录</code>，在通过主键查找某条记录的时候可以在<code>页目录</code>中使用二分法快速定位到对应的槽，然后再遍历该槽对应分组中的记录即可快速找到指定的记录。</p>
+</li>
+</ol>
+<h2 id="MyISAM"><a href="#MyISAM" class="headerlink" title="MyISAM"></a>MyISAM</h2><ol>
+<li>设计简单，数据以紧密格式存储。对于只读数据，或者表比较小、可以容忍修复操作，则可以使用</li>
+<li>有大量特性，包括压缩表、空间数据索引等</li>
+<li>不支持事务，也不支持行级锁</li>
+</ol>
+<h2 id="两引擎对比"><a href="#两引擎对比" class="headerlink" title="两引擎对比"></a>两引擎对比</h2><ul>
+<li>事务：InnoDB 是事务型的，可以使用 Commit 和 Rollback 语句</li>
+<li>并发：行级锁和表级锁的区别</li>
+<li>外键：InnoDB支持，MyISAM 不支持</li>
+<li>备份：InnoDB支持在线热备份</li>
+<li>崩溃恢复：MyISAM 崩溃后发生损坏的概率比 InnoDB 高很多，而且恢复的速度也更慢。</li>
+</ul>
+<h2 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h2><ol>
+<li><p>概念：针对数据页所做的目录。每个目录项包含以下两部分：1、key：页的用户记录中最小的主键值。2、page_no：数据页页号。</p>
+</li>
+<li><p><strong>InnoDB 中的索引方案</strong>：复用之前存储<strong>用户记录</strong>的数据页来存储目录项，称为目录项记录。record_type为1（普通用户记录为0，最小记录为2，最大记录为3）</p>
+</li>
+<li><p>有了目录项记录之后，根据某个主键值去查找记录的步骤可以大致拆分成下边两步，以查找主键为<code>20</code>的记录为例：1、先到存储<code>目录项记录</code>的页中通过二分法快速定位到对应目录项，因为<code>12 &lt; 20 &lt; 209</code>，所以定位到对应的记录所在的页就是<code>页9</code>。2、从<code>页9</code>中根据二分法快速定位到主键值为<code>20</code>的用户记录。</p>
+</li>
+<li><p>目录项记录过多之后就又在之上建立目录， 从而实现了类似一棵树的结构，这就是数据库的数据结构形式：B+树。</p>
+</li>
+<li><p>聚簇索引</p>
+</li>
+<li><p>二级索引：由于<code>聚簇索引</code>只能在搜索条件是主键值时才能发挥作用，因为<code>B+</code>树中的数据都是按照主键进行排序的。那如果我们想以别的列作为搜索条件就没办法了，该怎么办呢？难道只能从头到尾沿着链表依次遍历记录么？答案是否定的。我们可以根据不同列（除主键外的其他列）的大小作为数据页、页中记录的排序规则，再建一棵B+数。但是通过这棵B+树只能够得到对应列上的值所对应的主键值，还需要进行一次<strong>回表</strong>操作。通过查到的主键到<strong>聚簇索引</strong>中查找对应的页中记录。所以这种<code>B+</code>树也被称为<code>二级索引</code>（英文名<code>secondary index</code>），或者<code>辅助索引</code>。由于我们使用的是<code>c2</code>列的大小作为<code>B+</code>树的排序规则，所以我们也称这个<code>B+</code>树为为c2列建立的索引。</p>
+</li>
+<li><p>联合索引：以c2和c3列的大小为排序规则建立的<code>B+</code>树称为<code>联合索引</code></p>
+</li>
+<li><p>MyISAM 中的索引方案：</p>
+<ul>
+<li><p>MyISAM 将索引和数据分开存储</p>
+</li>
+<li><p>将表中的记录按照插入时间顺序的存储在一块存储空间上，我们可以通过行号而快速访问到一条记录</p>
+</li>
+<li><p><code>MyISAM</code>会单独为表的主键创建一个<code>B+</code>树索引，只不过在<code>B+</code>树的叶子节点中存储的不是完整的用户记录，而是<code>主键值 + 行号</code>的组合。也就是先通过索引找到对应的行号，再通过行号去找对应的记录！</p>
+<p>这一点和<code>InnoDB</code>是完全不相同的，在<code>InnoDB</code>存储引擎中，我们只需要根据主键值对<code>聚簇索引</code>进行一次查找能找到对应的记录，而在<code>MyISAM</code>中却需要进行一次<code>回表</code>操作，意味着<code>MyISAM</code>中建立的索引全部都是<code>二级索引</code>！</p>
+</li>
+</ul>
+</li>
+<li><p>索引的创建：<code>InnoDB</code>和<code>MyISAM</code>会自动为主键或者声明为<code>UNIQUE</code>的列去自动建立<code>B+</code>树索引，但是如果我们想为其他的列建立索引就需要我们显式的去指明。</p>
+</li>
+<li><p>创建索引的sql语句：</p>
+<ul>
+<li><p>在创建表的时候指定需要建立索引的单个列或者建立联合索引的多个列：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">CREATE</span> TALBE 表名 (</div><div class="line">    各种列的信息 ··· , </div><div class="line">    [<span class="keyword">KEY</span>|<span class="keyword">INDEX</span>] 索引名 (需要被索引的单个列或多个列)</div><div class="line">)</div></pre></td></tr></table></figure>
+</li>
+<li><p>其中的<code>KEY</code>和<code>INDEX</code>是同义词，任意选用一个就可以。我们也可以在修改表结构的时候添加索引：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> 表名 <span class="keyword">ADD</span> [<span class="keyword">INDEX</span>|<span class="keyword">KEY</span>] 索引名 (需要被索引的单个列或多个列);</div></pre></td></tr></table></figure>
+</li>
+<li><p>也可以在修改表结构的时候删除索引：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> 表名 <span class="keyword">DROP</span> [<span class="keyword">INDEX</span>|<span class="keyword">KEY</span>] 索引名;</div></pre></td></tr></table></figure>
+</li>
+<li><p>比方说我们想在创建<code>index_demo</code>表的时候就为<code>c2</code>和<code>c3</code>列添加一个<code>联合索引</code>，可以这么写建表语句：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> index_demo(</div><div class="line">    c1 <span class="built_in">INT</span>,</div><div class="line">    c2 <span class="built_in">INT</span>,</div><div class="line">    c3 <span class="built_in">CHAR</span>(<span class="number">1</span>),</div><div class="line">    PRIMARY <span class="keyword">KEY</span>(c1),</div><div class="line">    <span class="keyword">INDEX</span> idx_c2_c3 (c2, c3)</div><div class="line">);</div></pre></td></tr></table></figure>
+</li>
+<li><p>如果我们想删除这个索引，可以这么写：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> index_demo <span class="keyword">DROP</span> <span class="keyword">INDEX</span> idx_c2_c3;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>所以，索引的重要性不言而喻：</p>
+<ul>
+<li>以主键为搜索条件，可以使用<code>Page Directory</code>通过二分法快速定位相应的用户记录。</li>
+<li>以其他列为搜索条件，需要按照记录组成的单链表依次遍历各条记录。</li>
+<li>没有索引的情况下，不论是以主键还是其他列作为搜索条件，只能沿着页的双链表从左到右依次遍历各个页。</li>
+</ul>
+</li>
+<li><p>要更好地使用索引进行查询，你必须知道使用索引查询的性质：</p>
+<ol>
+<li><p>搜索条件中列的顺序和定义索引列时的顺序是一致的。</p>
+</li>
+<li><p>在联合索引中，使用左值进行匹配！</p>
+</li>
+<li><p>匹配列前缀。<code>B+</code>树中的数据页和记录都先是按照<code>name</code>列排序的，只给出前缀也是可以通过<code>二分法</code>快速定位的。如果只给出后缀或者中间的某个字符串，<code>MySQL</code>就无法通过<code>二分法</code>来快速定位记录位置了，因为字符串中间有<code>&#39;As&#39;</code>的字符串并没有排好序，所以只能全表扫描了。</p>
+</li>
+<li><p>匹配范围值也可以用到索引查询。</p>
+</li>
+<li><p>我们在写查询语句的时候经常需要对查询出来的记录按照某种规则进行排序，对于不适用<code>B+</code>树索引进行排序的情况，我们只能把记录都加载到内存中，再用一些排序算法，比如快速排序、归并排序、吧啦吧啦排序等等在内存中对这些记录进行排序，然后再把排好序的结果集返回到客户端。但是如果<code>ORDER BY</code>子句里使用到了我们的索引列，<strong>就有可能省去在内存中排序的步骤</strong>。</p>
+</li>
+<li><p>总结：<code>B+</code>树索引适用于下边这些情况：</p>
+</li>
+<li><ul>
+<li>全值匹配</li>
+<li>匹配左边的列</li>
+<li>匹配范围值</li>
+<li>精确匹配某一列并范围匹配另外一列</li>
+<li>用于排序</li>
+<li>用于分组</li>
+</ul>
+</li>
+</ol>
+</li>
+<li><p>如何挑选索引：</p>
+<ol>
+<li><p>只为用于搜索、排序或分组的列创建索引。也就是说，只为出现在<code>WHERE</code>子句中的列、连接子句中的连接列，或者出现在<code>ORDER BY</code>或<code>GROUP BY</code>子句中的列创建索引。而出现在查询列表中的列就没必要建立索引了。</p>
+</li>
+<li><p>考虑列的基数。<code>列的基数</code>指的是某一列中不重复数据的个数，比方说某个列包含值<code>2, 5, 8, 2, 5, 8, 2, 5, 8</code>，虽然有<code>9</code>条记录，但该列的基数却是<code>3</code>。也就是说，在记录行数一定的情况下，列的基数越大，该列中的值越分散，列的基数越小，该列中的值越集中。这个<code>列的基数</code>指标非常重要，直接影响我们是否能有效的利用索引。假设某个列的基数为<code>1</code>，也就是所有记录在该列中的值都一样，那为该列建立索引是没有用的，因为所有值都一样就无法排序，无法进行二分法查找了～ 所以结论就是：最好为那些列的基数大的列建立索引，为基数太小列的建立索引效果可能不好。</p>
+</li>
+<li><p>索引列的类型尽量小。</p>
+<ol>
+<li>数据类型越小，在查询时进行的比较操作越快（这是CPU层次的东东）</li>
+<li>数据类型越小，索引占用的存储空间就越少，在一个数据页内就可以放下更多的记录，从而减少磁盘<code>I/O</code>带来的性能损耗，也就意味着可以把更多的数据页缓存在内存中，从而加快读写效率。</li>
+</ol>
+</li>
+<li><p>索引字符串值的前缀（前缀索引）。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> person_info(</div><div class="line">    <span class="keyword">name</span> <span class="built_in">VARCHAR</span>(<span class="number">100</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</div><div class="line">    birthday <span class="built_in">DATE</span> <span class="keyword">NOT</span> <span class="literal">NULL</span>,</div><div class="line">    phone_number <span class="built_in">CHAR</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</div><div class="line">    country <span class="built_in">varchar</span>(<span class="number">100</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</div><div class="line">    <span class="keyword">KEY</span> idx_name_age_birthday (<span class="keyword">name</span>(<span class="number">10</span>), birthday, phone_number)</div><div class="line">);</div></pre></td></tr></table></figure>
+<p><code>name(10)</code>就表示在建立的<code>B+</code>树索引中只保留记录的前<code>10</code>个字符的编码，这种只索引字符串值的前缀的策略是我们非常鼓励的，尤其是在字符串类型能存储的字符比较多的时候。</p>
+</li>
+<li><p>尽量使用联合索引。如果我们的搜索条件中有多个列的话，最好为这些列建立一个<code>联合索引</code>， 而不是分别为每个列建立一个索引（因为每建一个索引都会维护一棵<code>B+</code>树）</p>
+</li>
+<li><p>让索引列在比较表达式中单独出现。<strong>如果索引列在比较表达式中不是以单独列的形式出现，而是以某个表达式，或者函数调用形式出现的话，是用不到索引的。</strong></p>
+<p>eg：下边的两个<code>WHERE</code>子句虽然语义是一致的，但是在效率上却有差别：</p>
+<ol>
+<li><code>WHERE my_col * 2 &lt; 4</code></li>
+<li><code>WHERE my_col &lt; 4/2</code></li>
+</ol>
+<p>第1个<code>WHERE</code>子句中<code>my_col</code>列并不是以单独列的形式出现的，而是以<code>my_col * 2</code>这样的表达式的形式出现的，存储引擎<strong>会依次遍历所有的记录，计算这个表达式的值是不是小于<code>4</code>，所以这种情况下是使用不到为<code>my_col</code>列建立的<code>B+</code>树索引的</strong>。而第2个<code>WHERE</code>子句中<code>my_col</code>列并是以单独列的形式出现的，这样的情况可以直接使用<code>B+</code>树索引。</p>
+</li>
+<li><p>主键插入顺序。<strong>让主键具有<code>AUTO_INCREMENT</code>，让存储引擎自己为表生成主键，而不是我们手动插入。</strong>在<strong>插入记录时</strong>存储引擎会自动为我们填入自增的主键值。<strong>为了尽可能少的让<code>聚簇索引</code>发生页面分裂和记录移位的情况</strong>，建议让主键拥有<code>AUTO_INCREMENT</code>属性。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> person_info(</div><div class="line">    <span class="keyword">id</span> <span class="built_in">INT</span> <span class="keyword">UNSIGNED</span> <span class="keyword">NOT</span> <span class="literal">NULL</span> AUTO_INCREMENT,</div><div class="line">    <span class="keyword">name</span> <span class="built_in">VARCHAR</span>(<span class="number">100</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</div><div class="line">    birthday <span class="built_in">DATE</span> <span class="keyword">NOT</span> <span class="literal">NULL</span>,</div><div class="line">    phone_number <span class="built_in">CHAR</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</div><div class="line">    country <span class="built_in">varchar</span>(<span class="number">100</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</div><div class="line">    PRIMARY <span class="keyword">KEY</span> (<span class="keyword">id</span>),</div><div class="line">    <span class="keyword">KEY</span> idx_name_age_birthday (<span class="keyword">name</span>(<span class="number">10</span>), birthday, phone_number)</div><div class="line">);</div></pre></td></tr></table></figure>
+</li>
+<li><p>防止冗余和重复索引。</p>
+</li>
+<li><p>索引覆盖。只需要用到索引，而不需要进行回表的查询方式称为<code>索引覆盖</code>。当然，如果业务需要查询出索引以外的列，那还是以保证业务需求为重。但是我们很不鼓励用<code>*</code>号作为查询列表，<strong>最好把我们需要查询的列依次标明。</strong></p>
+</li>
+<li><p>让<strong>选择性最强的索引列放在前面</strong>：选择性是指不重复的索引值和记录总数的比值。选择性越高，查询效率也越高。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">SELECT</span> <span class="keyword">COUNT</span>(<span class="keyword">DISTINCT</span> staff_id)/<span class="keyword">COUNT</span>(*) <span class="keyword">AS</span> staff_id_selectivity,</div><div class="line"><span class="keyword">COUNT</span>(<span class="keyword">DISTINCT</span> customer_id)/<span class="keyword">COUNT</span>(*) <span class="keyword">AS</span> customer_id_selectivity,</div><div class="line"><span class="keyword">COUNT</span>(*)</div><div class="line"><span class="keyword">FROM</span> payment;</div></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+<li><p><strong>哈希索引</strong>：InnoDB 有一个特殊的功能叫“自适应哈希索引”，当某个索引值被使用得非常频繁时，会在B+树索引之上再创建一个哈希索引。查找速度提升。</p>
+</li>
+<li><p>对于更大型的表可以使用分区技术</p>
+</li>
+</ol>
+<h2 id="MYSQL-时间数据类型"><a href="#MYSQL-时间数据类型" class="headerlink" title="MYSQL 时间数据类型"></a>MYSQL 时间数据类型</h2><ol>
+<li><strong>DATE、TIME和DATETIME：<code>DATE</code>表示日期，格式是<code>CCYY-MM-DD</code>；<code>TIME</code>表示时间，格式是<code>hh:mm:ss[.uuuuuu]</code>，<code>DATETIME</code>表示日期+时间，格式是<code>CCYY-MM-DD hh:mm:ss[.uuuuuu]</code>。其中的<code>CC</code>、<code>YY</code>、<code>MM</code>、<code>DD</code>、<code>hh</code>、<code>mm</code>、<code>ss</code>、<code>uuuuuu</code>分别表示世纪、年、月、日、时、分、秒、小数秒</strong></li>
+<li>TIMESTAMP：使用时间戳存储的好处是：展示的值可以随着时区的变化而变化，比起 DATETIME 的空间效率也更高，使用4个字节</li>
+</ol>
+<h2 id="Mysql-支持的事务隔离级别"><a href="#Mysql-支持的事务隔离级别" class="headerlink" title="Mysql 支持的事务隔离级别"></a>Mysql 支持的事务隔离级别</h2><ol>
+<li><p>四个不同层次：</p>
+<ol>
+<li><p>读未提交。最低的隔离水平，允许<strong>脏读</strong>出现</p>
+</li>
+<li><p>读已提交。允许不可重复读和<strong>幻读</strong>出现</p>
+</li>
+<li><p>可重复读（Mysql InnoDB 引擎的默认隔离级别）：保证同一事务中多次读取的数据是一致的</p>
+<p>注意：由于可重复读（同一个事务前后读取的数据都是同一个状态），所以会出现幻读的情况（1.外部事务插入了id=11的记录并提交了事务，本事务继续添加id=11的记录会报错。2.外部数据插入N条数量=15的数据并提交，本事务只有一条，更新对应数据时看到N条数据被更新，这就是幻读）</p>
+</li>
+<li><p>串行化</p>
+</li>
+</ol>
+</li>
+<li><p>如何设置？</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">SET</span> [<span class="keyword">SESSION</span> | <span class="keyword">GLOBAL</span>] <span class="keyword">TRANSACTION</span> <span class="keyword">ISOLATION</span> <span class="keyword">LEVEL</span> &#123;<span class="keyword">READ</span> UNCOMMITTED | <span class="keyword">READ</span> COMMITTED | REPEATABLE <span class="keyword">READ</span> | <span class="keyword">SERIALIZABLE</span>&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li>GLOBAL 是对所有新连接设置默认事务级别</li>
+<li>SESSION 是对当前连接上执行的事务设置默认事务级别</li>
+</ol>
+</li>
+<li><p>如何防止幻读？</p>
+<p>如果使用普通的读，会得到一致性的结果。<strong>但InnoDB提供了一种机制</strong>，如果使用了<strong>加锁</strong>的读，<strong>就会读到“最新的”、“提交”读的结果</strong>。这种机制就是：<strong>next-key locks</strong>。</p>
+</li>
+</ol>
+<h2 id="悲观锁和乐观锁的原理和应用场景"><a href="#悲观锁和乐观锁的原理和应用场景" class="headerlink" title="悲观锁和乐观锁的原理和应用场景"></a>悲观锁和乐观锁的原理和应用场景</h2><ol>
+<li><p>悲观锁：利用类似 SELECT … FOR UPDATE 这样的语句，对数据加锁，避免其他事务意外修改数据。</p>
+</li>
+<li><p>乐观锁：利用 CAS 机制，通过对比数据的时间戳或者版本号</p>
+</li>
+<li><p>购票系统中，同时查询的人可能很多，具体座位票只卖给一个人，但余票可能很多，不能预测哪个查询者会购票，适合使用乐观锁。</p>
+</li>
+<li><p>如何使用乐观锁</p>
+<ol>
+<li><p>version 版本号机制</p>
+</li>
+<li><p>CAS 算法</p>
+</li>
+<li><p>在 Hiberate 中，通过class描述符的optimistic-lock属性结合version描述符指定。 </p>
+<p> optimistic-lock属性有如下可选取值：  </p>
+<ul>
+<li>Ø none  无乐观锁 </li>
+<li>Ø version  通过版本机制实现乐观锁 </li>
+<li>Ø dirty  通过检查发生变动过的属性实现乐观锁  </li>
+<li>Ø all  通过检查所有属性实现乐观锁 </li>
+</ul>
+</li>
+<li><p>检查失败时抛异常，处理</p>
+</li>
+</ol>
+</li>
+<li><p>如何使用悲观锁</p>
+<ol>
+<li><p>排它锁：for update</p>
+</li>
+<li><p>共享锁：lock in share mode</p>
+</li>
+<li><p>在 Hiberate 中，加悲观锁的方法</p>
+<p><code>query.setLockMode(&quot; user &quot; ,LockMode.UPGRADE);  // 加锁</code></p>
+</li>
+<li><p>Hibernate的加锁模式有：  </p>
+<ul>
+<li>Ø LockMode.NONE ： 无锁机制。 </li>
+<li>Ø LockMode.WRITE ：Hibernate在Insert和Update记录的时候会自动  获取。  </li>
+<li>Ø LockMode.READ ： Hibernate在读取记录的时候会自动获取。  以上这三种锁机制一般由Hibernate内部使用，如Hibernate为了保证Update  过程中对象不会被外界修改，会在save方法实现中自动为目标对象加上WRITE锁。  </li>
+<li>Ø LockMode.UPGRADE ：利用数据库的for update子句加锁。  </li>
+<li>Ø LockMode. UPGRADE_NOWAIT ：Oracle的特定实现，利用Oracle的for update nowait子句实现加锁</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="数据库切分"><a href="#数据库切分" class="headerlink" title="数据库切分"></a>数据库切分</h2><h3 id="水平切"><a href="#水平切" class="headerlink" title="水平切"></a>水平切</h3><p>将同表中记录拆分到多个结构相同的表当中</p>
+<h3 id="垂直切"><a href="#垂直切" class="headerlink" title="垂直切"></a>垂直切</h3><p>将一张表按列分成多个表</p>
+<h2 id="全文索引"><a href="#全文索引" class="headerlink" title="全文索引"></a>全文索引</h2><h3 id="全文检索模式（中文，从-5-7-6-开始）"><a href="#全文检索模式（中文，从-5-7-6-开始）" class="headerlink" title="全文检索模式（中文，从 5.7.6 开始）"></a>全文检索模式（中文，从 5.7.6 开始）</h3><ol>
+<li><p>自然语言模式</p>
+<p>Mysql 默认的全文检索模式。</p>
+</li>
+<li><p>BOOLEAN模式(BOOLEAN MODE)</p>
+</li>
+<li><p>示例</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> articles</div><div class="line"><span class="keyword">WHERE</span> <span class="keyword">MATCH</span> (title,<span class="keyword">body</span>)</div><div class="line">AGAINST (<span class="string">'一路 一带'</span> <span class="keyword">IN</span> <span class="keyword">NATURAL</span> <span class="keyword">LANGUAGE</span> <span class="keyword">MODE</span>);</div><div class="line">//不指定模式，则默认使用自然语言模式</div></pre></td></tr></table></figure>
+</li>
+<li><p>相关性支持的示例</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">// 获取相关性的值</div><div class="line"><span class="keyword">SELECT</span> <span class="keyword">id</span>,title,</div><div class="line"><span class="keyword">MATCH</span> (title,<span class="keyword">body</span>) AGAINST (<span class="string">'手机'</span> <span class="keyword">IN</span> <span class="keyword">NATURAL</span> <span class="keyword">LANGUAGE</span> <span class="keyword">MODE</span>) <span class="keyword">AS</span> score</div><div class="line"><span class="keyword">FROM</span> articles</div><div class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> score <span class="keyword">DESC</span>;</div></pre></td></tr></table></figure>
+</li>
+<li><p>BOOLEAN 模式下运算符的使用方式</p>
+<ul>
+<li>‘apple banana’<br>无操作符，表示或，要么包含apple，要么包含banana</li>
+<li>‘+apple +juice’<br>必须同时包含两个词</li>
+<li>‘+apple macintosh’<br>必须包含apple，但是如果也包含macintosh的话，相关性会更高。</li>
+<li>‘+apple -macintosh’<br>必须包含apple，同时不能包含macintosh。</li>
+<li>‘+apple ~macintosh’<br>必须包含apple，但是如果也包含macintosh的话，相关性要比不包含macintosh的记录低。</li>
+<li>‘+apple +(&gt;juice &lt;pie)’<br>查询必须包含apple和juice或者apple和pie的记录，但是apple juice的相关性要比apple pie高。</li>
+<li>‘apple*’<br>查询包含以apple开头的单词的记录，如apple、apples、applet。</li>
+<li>‘“some words”‘<br>使用双引号把要搜素的词括起来，效果类似于like ‘%some words%’，<br>例如“some words of wisdom”会被匹配到，而“some noise words”就不会被匹配。</li>
+</ul>
+<p>操作符总结：例如“+”表示必须包含，“-”表示不包含，“*”表示通配符（这种情况， 即使传递的字符串较小或出现在停词中，也不会被过滤掉）。</p>
+</li>
+</ol>
+<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><ol>
+<li>只能在类型为 CHAR、VARCHAR 或者 TEXT 的字段上创建全文索引</li>
+<li>MATCH() 函数使用的字段名，必须要与创建全文索引时指定的字段名一致</li>
+<li>MATCH() 函数使用的字段名只能是同一个表的字段</li>
+<li>如果要导入大数据集，先导入数据再在表上创建全文索引的方式比先创建再导数据的方式快很多</li>
+</ol>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/数据库/">数据库</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Mysql/">Mysql</a>
+  </div>
+
+</div>
+
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2019/02/07/computer-network/"  title="computer_network">
+ <span>computer_network
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+<div id="authorInfo">
+	
+		<div class="author-img"></div>		
+	
+	<div class="social-info" class="clearfix">
+		
+		
+		<a href="https://github.com/linkaiup" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://linkaiup.tumblr.com" target="_blank" class="icon-tumblr" title="Tumblr"></a>
+		
+		
+		<a href="mailto:876487322@qq.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+
+	</div>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Java-小记/" title="Java 小记">Java 小记<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Netty/" title="Netty">Netty<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web服务器/" title="Web服务器">Web服务器<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库/" title="数据库">数据库<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活随记/" title="生活随记">生活随记<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/计算机基础/" title="计算机基础">计算机基础<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/文件IO/" title="文件IO">文件IO<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Java多线程/" title="Java多线程">Java多线程<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Java进阶/" title="Java进阶">Java进阶<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Web服务器/" title="Web服务器">Web服务器<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/网络/" title="网络">网络<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mysql/" title="Mysql">Mysql<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/life/" title="life">life<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Java/" title="Java">Java<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+<div id="footer" >
+		
+		
+
+		<p class="copyright">
+		<span id="busuanzi_container_site_pv" style='display:none'>
+                    本站总访问量为<span id="busuanzi_value_site_pv"></span>次
+   		</span>
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/hsihohuang/kiddochan" target="_blank" title="Kiddochan">Kiddochan</a> © 2019 
+		
+		<a href="/about" target="_blank" title="LinKai">LinKai</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
