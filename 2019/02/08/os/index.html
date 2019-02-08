@@ -1,0 +1,752 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>os | HeyLin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="LinKai">
+    
+
+    
+    <meta name="description" content="复习阶段第四弹，操作系统知识复习与整理。详见正文解析…">
+<meta name="keywords" content="操作系统">
+<meta property="og:type" content="article">
+<meta property="og:title" content="os">
+<meta property="og:url" content="http://Linkaiup.github.io/2019/02/08/os/index.html">
+<meta property="og:site_name" content="HeyLin">
+<meta property="og:description" content="复习阶段第四弹，操作系统知识复习与整理。详见正文解析…">
+<meta property="og:image" content="http://linkaiup.github.io/tmp/1545464283948.png">
+<meta property="og:updated_time" content="2019-02-08T06:00:59.317Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="os">
+<meta name="twitter:description" content="复习阶段第四弹，操作系统知识复习与整理。详见正文解析…">
+<meta name="twitter:image" content="http://linkaiup.github.io/tmp/1545464283948.png">
+
+    
+    <link rel="alternative" href="atom.xml" title="HeyLin" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/profile.png">
+    <link rel="apple-touch-icon-precomposed" href="/img/profile.png">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="HeyLin" title="HeyLin"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="HeyLin">HeyLin</a></h1>
+				<h2 class="blog-motto">Remember to sow in the spring.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:Linkaiup.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2019/02/08/os/" title="os" itemprop="url">os</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="LinKai" target="_blank" itemprop="author">LinKai</a>
+		
+  <p class="article-time">
+    <time datetime="2019-02-08T13:40:32.000Z" itemprop="datePublished"> 发表于 2019-02-08</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#处理机调度与死锁"><span class="toc-number">1.</span> <span class="toc-text">处理机调度与死锁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#进程同步"><span class="toc-number">2.</span> <span class="toc-text">进程同步</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#硬件同步机制"><span class="toc-number">2.1.</span> <span class="toc-text">硬件同步机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#信号量机制"><span class="toc-number">2.2.</span> <span class="toc-text">信号量机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#管程机制"><span class="toc-number">2.3.</span> <span class="toc-text">管程机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#经典进程的同步问题"><span class="toc-number">2.4.</span> <span class="toc-text">经典进程的同步问题</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#生产者-消费者问题"><span class="toc-number">2.4.1.</span> <span class="toc-text">生产者-消费者问题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#哲学家进餐问题"><span class="toc-number">2.4.2.</span> <span class="toc-text">哲学家进餐问题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#读者-写者问题"><span class="toc-number">2.4.3.</span> <span class="toc-text">读者-写者问题</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#进程通信实现方式"><span class="toc-number">3.</span> <span class="toc-text">进程通信实现方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#共享存储器系统"><span class="toc-number">3.1.</span> <span class="toc-text">共享存储器系统</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#管道通信系统"><span class="toc-number">3.2.</span> <span class="toc-text">管道通信系统</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#消息队列"><span class="toc-number">3.3.</span> <span class="toc-text">消息队列</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#客户机-服务器系统"><span class="toc-number">3.4.</span> <span class="toc-text">客户机-服务器系统</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#消息传递通信的实现方式"><span class="toc-number">3.5.</span> <span class="toc-text">消息传递通信的实现方式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#线程"><span class="toc-number">4.</span> <span class="toc-text">线程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#线程基本概念"><span class="toc-number">4.1.</span> <span class="toc-text">线程基本概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#线程与进程的比较"><span class="toc-number">4.2.</span> <span class="toc-text">线程与进程的比较</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#线程的线程控制块"><span class="toc-number">4.3.</span> <span class="toc-text">线程的线程控制块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#线程的实现方式"><span class="toc-number">4.4.</span> <span class="toc-text">线程的实现方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#线程的实现"><span class="toc-number">4.5.</span> <span class="toc-text">线程的实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#线程的创建和终止"><span class="toc-number">4.6.</span> <span class="toc-text">线程的创建和终止</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#练习题"><span class="toc-number">5.</span> <span class="toc-text">练习题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#进程与程序的区别"><span class="toc-number">5.1.</span> <span class="toc-text">进程与程序的区别</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#处理机调度的层次与调度算法的目标"><span class="toc-number">6.</span> <span class="toc-text">处理机调度的层次与调度算法的目标</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#调度的层次"><span class="toc-number">6.1.</span> <span class="toc-text">调度的层次</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#调度算法的目标"><span class="toc-number">6.2.</span> <span class="toc-text">调度算法的目标</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#作业与作业调度"><span class="toc-number">7.</span> <span class="toc-text">作业与作业调度</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#批处理系统中的作业"><span class="toc-number">7.1.</span> <span class="toc-text">批处理系统中的作业</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#作业调度的主要任务"><span class="toc-number">7.2.</span> <span class="toc-text">作业调度的主要任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#先来先服务（FCFS）和短作业优先（SJF）调度算法"><span class="toc-number">7.3.</span> <span class="toc-text">先来先服务（FCFS）和短作业优先（SJF）调度算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#先级调度算法-PSA-和高响应比优先调度算法-HRRN"><span class="toc-number">7.4.</span> <span class="toc-text">先级调度算法(PSA)和高响应比优先调度算法(HRRN)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#进程调度"><span class="toc-number">8.</span> <span class="toc-text">进程调度</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#进程调度的任务、机制和方式"><span class="toc-number">8.1.</span> <span class="toc-text">进程调度的任务、机制和方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#轮转调度算法（进程）"><span class="toc-number">8.2.</span> <span class="toc-text">轮转调度算法（进程）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#优先级调度算法（进程）"><span class="toc-number">8.3.</span> <span class="toc-text">优先级调度算法（进程）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多队列调度算法"><span class="toc-number">8.4.</span> <span class="toc-text">多队列调度算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多级反馈队列调度算法"><span class="toc-number">8.5.</span> <span class="toc-text">多级反馈队列调度算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#基于公平原则的调度算法"><span class="toc-number">8.6.</span> <span class="toc-text">基于公平原则的调度算法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#死锁"><span class="toc-number">9.</span> <span class="toc-text">死锁</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#资源问题"><span class="toc-number">9.1.</span> <span class="toc-text">资源问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#处理方法"><span class="toc-number">9.2.</span> <span class="toc-text">处理方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#死锁检测与死锁恢复"><span class="toc-number">9.3.</span> <span class="toc-text">死锁检测与死锁恢复</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#死锁预防"><span class="toc-number">9.4.</span> <span class="toc-text">死锁预防</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#死锁避免"><span class="toc-number">9.5.</span> <span class="toc-text">死锁避免</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<p>复习阶段第四弹，操作系统知识复习与整理。详见正文解析…<br><a id="more"></a></p>
+<hr>
+<h2 id="处理机调度与死锁"><a href="#处理机调度与死锁" class="headerlink" title="处理机调度与死锁"></a>处理机调度与死锁</h2><h2 id="进程同步"><a href="#进程同步" class="headerlink" title="进程同步"></a>进程同步</h2><h3 id="硬件同步机制"><a href="#硬件同步机制" class="headerlink" title="硬件同步机制"></a>硬件同步机制</h3><ol>
+<li>关中断：在进入锁测试之前关闭中断，直到完成锁测试并上锁之后才能打开中断。这样，进程在临界区执行期间，计算机系统不响应中断，从而不会引发调度，也就不会发生进程或线程切换。保证了对锁的测试和关锁操作的连续性和完整性，<strong>有效地保证了互斥</strong>。</li>
+<li>利用 Test-and-Set 指令实现互斥：TS。为每个临界资源设置一个布尔变量lock，由于变量lock代表了该资源的状态，故可当成锁。</li>
+<li>利用 Swap 指令实现进程互斥：为每个临界资源设置一个全局的布尔变量lock，初值为false，在每个进程中再利用一个局部布尔变量key。利用Swap指令实现进程互斥</li>
+</ol>
+<p>　　虽然上述硬件指令能有效地实现进程互斥，但当临界资源忙碌时，其他访问进程必须不断进行测试，“忙等”，不符合“让权等待”的原则，造成处理机时间浪费。所以…</p>
+<h3 id="信号量机制"><a href="#信号量机制" class="headerlink" title="信号量机制"></a>信号量机制</h3><ol>
+<li><p>整型信号量：用于表示资源数目的整型量S。除初始化外，只能使用两个标准原子操作wait(S)和signal(S)来访问。P、V操作。代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">wait(S)&#123;</div><div class="line">    <span class="keyword">while</span>(S&lt;=<span class="number">0</span>); <span class="comment">//do no-op，不断测试，并未遵循“让权等待”原则。所以不是最优</span></div><div class="line">    S--;</div><div class="line">&#125;</div><div class="line">signal(S)&#123;</div><div class="line">    S++;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>记录型信号量：不存在忙等现象。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span>&#123;</span></div><div class="line">    <span class="keyword">int</span> value;</div><div class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">process_control_block</span> *<span class="title">list</span>;</span></div><div class="line">&#125;semaphore;</div><div class="line">wait(semaphore *S)&#123;</div><div class="line">    S-&gt;value--;</div><div class="line">    <span class="keyword">if</span>(S-&gt;value&lt;<span class="number">0</span>)block(S-&gt;<span class="built_in">list</span>);</div><div class="line">&#125;</div><div class="line">signal(semaphore *S)&#123;</div><div class="line">    S-&gt;value++;</div><div class="line">    <span class="keyword">if</span>(S-&gt;value&lt;=<span class="number">0</span>)wakeup(S-&gt;<span class="built_in">list</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>AND 型信号量：将多个资源一次性全部分配给进程</p>
+</li>
+<li><p>信号量集：对资源的分配下限值</p>
+</li>
+</ol>
+<h3 id="管程机制"><a href="#管程机制" class="headerlink" title="管程机制"></a>管程机制</h3><ol>
+<li><p>产生原因：大量的同步操作使用不当会导致系统死锁，也给系统的管理带来了麻烦。</p>
+</li>
+<li><p>定义：<strong>代表共享资源的数据结构</strong>以及由对该共享数据结构实施操作的<strong>一组过程</strong>所组成的资源管理程序共同构成了一个操作系统的<strong>资源管理模块</strong>，称为<strong>管程</strong>。</p>
+</li>
+<li><p>组成：1.管程名称。2.局部于管程的共享数据结构说明。3.对该数据结构进行操作的一组过程。4.对管程中的共享数据设置初始值的语句。</p>
+</li>
+<li><p>条件变量：为了解决进程在管程中遇到某些条件而被阻塞或挂起的情况。引入了条件变量：condition.一个管程中有多个condition。eg：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">condition x;</div><div class="line">x.wait;</div><div class="line">x.signal;</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="经典进程的同步问题"><a href="#经典进程的同步问题" class="headerlink" title="经典进程的同步问题"></a>经典进程的同步问题</h3><h4 id="生产者-消费者问题"><a href="#生产者-消费者问题" class="headerlink" title="生产者-消费者问题"></a>生产者-消费者问题</h4><ol>
+<li><p>利用记录型信号量解决：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> in=<span class="number">0</span>,out=<span class="number">0</span>;</div><div class="line">item buffer[n];</div><div class="line">semaphore mutex=<span class="number">1</span>,empty=n,full=<span class="number">0</span>;  <span class="comment">//信号量</span></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">producer</span><span class="params">()</span></span>&#123;</div><div class="line">    <span class="keyword">do</span>&#123;</div><div class="line">        producer an item nextp;</div><div class="line">        ...</div><div class="line">        wait(empty);</div><div class="line">        wait(mutex);</div><div class="line">        buffer[in]=nextp;</div><div class="line">        in=(in+<span class="number">1</span>)%n;</div><div class="line">        signal(mutex);</div><div class="line">        signal(full);</div><div class="line">    &#125;<span class="keyword">while</span>(TRUE);</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">consumer</span><span class="params">()</span></span>&#123;</div><div class="line">    <span class="keyword">do</span>&#123;</div><div class="line">        wait(full);</div><div class="line">        wait(mutex);</div><div class="line">        nextc=buffer[out];</div><div class="line">        out=(out+<span class="number">1</span>)%n;</div><div class="line">        signal(mutex);</div><div class="line">        signal(empty);</div><div class="line">        consumer the item in nextc;</div><div class="line">        ...</div><div class="line">    &#125;<span class="keyword">while</span>(TRUE);</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">()</span></span>&#123;</div><div class="line">    <span class="function">cobegin</span></div><div class="line">        <span class="title">producer</span><span class="params">()</span>; consumer();</div><div class="line">    coend</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>利用 AND 信号量解决生产者-消费则问题</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//producer上面皆一样</span></div><div class="line">producer an item nextp;</div><div class="line">...</div><div class="line">Swait(empty,mutex);</div><div class="line">buffer[in]=nextp;</div><div class="line">in=(in+<span class="number">1</span>)%n;</div><div class="line">Ssignal(mutex,full);</div><div class="line"></div><div class="line"><span class="comment">//consumer上面也皆一样</span></div><div class="line">Swait(full,mutex);</div><div class="line">nextc=buffer[out];</div><div class="line">out=(out+<span class="number">1</span>)%n;</div><div class="line">Ssignal(mutex,empty);</div></pre></td></tr></table></figure>
+</li>
+<li><p>利用管程解决</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div></pre></td><td class="code"><pre><div class="line">Monitor producerconsumer&#123;</div><div class="line">    item buffer[N];</div><div class="line">    ...</div><div class="line">    condition notfull,notempty;</div><div class="line">    <span class="keyword">int</span> count;</div><div class="line">    <span class="keyword">public</span>:</div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">put</span><span class="params">(item x)</span></span>&#123;</div><div class="line">        <span class="keyword">if</span>(count&gt;=N)cwait(notfull);<span class="comment">//缓冲池已满，生产者需等待</span></div><div class="line">        buffer[in]=x;</div><div class="line">        in=(in+<span class="number">1</span>)%N;</div><div class="line">        count++;</div><div class="line">        csignal(notempty);</div><div class="line">    &#125;</div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">get</span><span class="params">(item x)</span></span>&#123;</div><div class="line">        <span class="keyword">if</span>(count&lt;=<span class="number">0</span>)cwait(notempty);</div><div class="line">        x=buffer[out];</div><div class="line">        out=(out+<span class="number">1</span>)%N;</div><div class="line">        count--;</div><div class="line">        csignal(notfull);</div><div class="line">    &#125;</div><div class="line">    &#123;in=<span class="number">0</span>;out=<span class="number">0</span>;count=<span class="number">0</span>;&#125;</div><div class="line">&#125;PC;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">producer</span><span class="params">()</span></span>&#123;</div><div class="line">    item x;</div><div class="line">    <span class="keyword">while</span>(TRUE)&#123;</div><div class="line">        ...</div><div class="line">        producer an item in nextp;</div><div class="line">        PC.put(x);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">consumer</span><span class="params">()</span></span>&#123;</div><div class="line">    item x;</div><div class="line">    <span class="keyword">while</span>(TRUE)&#123;</div><div class="line">        PC.get(x);</div><div class="line">        consumer an item in nextc;</div><div class="line">        ...</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">()</span></span>&#123;</div><div class="line">    <span class="function">cobegin</span></div><div class="line">        <span class="title">producer</span><span class="params">()</span>;</div><div class="line">        consumer();</div><div class="line">    coend</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<h4 id="哲学家进餐问题"><a href="#哲学家进餐问题" class="headerlink" title="哲学家进餐问题"></a>哲学家进餐问题</h4><ol>
+<li><p>利用记录型</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">semaphore chopstick[<span class="number">5</span>]=&#123;<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>&#125;;</div><div class="line"><span class="keyword">do</span>&#123;</div><div class="line">    wait(chopstick[i]);</div><div class="line">    wait(chopstick[(i+<span class="number">1</span>)%<span class="number">5</span>]);</div><div class="line">    ...</div><div class="line">    <span class="comment">//eat</span></div><div class="line">    ...</div><div class="line">    signal(chopstick[i]);</div><div class="line">    signal(chopstick[(i+<span class="number">1</span>)%<span class="number">5</span>]);</div><div class="line">    ...</div><div class="line">    <span class="comment">//think</span></div><div class="line">    ...</div><div class="line">&#125;<span class="keyword">while</span>(TRUE);</div></pre></td></tr></table></figure>
+<p>对于五个信号量均为0的情况（死锁问题），可采取一下几种解法：</p>
+<ol>
+<li>至多只允许有四位哲学家同时去拿左边的筷子</li>
+<li>仅当哲学家的左右筷子均可用时，才允许他拿起筷子进餐</li>
+<li>规定奇数号哲学家先拿他左边的筷子，再去拿右边筷子。而偶数号哲学家则相反。</li>
+</ol>
+</li>
+<li><p>利用 AND 信号量</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">...</div><div class="line">Swait(chopstick[(i+<span class="number">1</span>)%<span class="number">5</span>],chopstick[i]);</div><div class="line">...</div><div class="line"><span class="comment">//eat</span></div><div class="line">Signal(chopstick[(i+<span class="number">1</span>)%<span class="number">5</span>],chopstick[i]);</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<h4 id="读者-写者问题"><a href="#读者-写者问题" class="headerlink" title="读者-写者问题"></a>读者-写者问题</h4><ol>
+<li><p>利用记录型信号量</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">semaphore rmutex=<span class="number">1</span>,wmutex=<span class="number">1</span>;</div><div class="line"><span class="keyword">int</span> readcount=<span class="number">0</span>;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">Reader</span><span class="params">()</span></span>&#123;</div><div class="line">    <span class="keyword">do</span>&#123;</div><div class="line">        wait(rmutex);<span class="comment">//为readcount设置的一个互斥信号量</span></div><div class="line">        <span class="keyword">if</span>(readcount==<span class="number">0</span>)wait(wmutex);<span class="comment">//锁住，不可写</span></div><div class="line">        readcount++;</div><div class="line">        signal(rmutex);<span class="comment">//让别的读进程继续可以执行，修改readcount</span></div><div class="line">        ...</div><div class="line">        perform read operation;</div><div class="line">        ...</div><div class="line">        wait(rmutex);</div><div class="line">        readcount--;</div><div class="line">        <span class="keyword">if</span>(readcount==<span class="number">0</span>)signal(wmutex);</div><div class="line">        signal(rmutex);<span class="comment">//让别的读进程继续可以执行，修改readcount</span></div><div class="line">    &#125;<span class="keyword">while</span>(TRUE);</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">Writer</span><span class="params">()</span></span>&#123;</div><div class="line">    <span class="keyword">do</span>&#123;</div><div class="line">        wait(wmutex); <span class="comment">//对信号量进行等待</span></div><div class="line">        <span class="function">perform write operation</span></div><div class="line">        <span class="title">signal</span><span class="params">(wmutex)</span>;</div><div class="line">    &#125;<span class="keyword">while</span>(TRUE);</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">()</span></span>&#123;</div><div class="line">    <span class="function">cobegin </span></div><div class="line">       <span class="title">Reader</span><span class="params">()</span>;Writer();</div><div class="line">    coend</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>利用信号量集机制</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> RN;</div><div class="line">semaphore L=RN,mx=<span class="number">1</span>;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">Reader</span><span class="params">()</span></span>&#123;</div><div class="line">    <span class="keyword">do</span>&#123;</div><div class="line">        Swait(L,<span class="number">1</span>,<span class="number">1</span>);</div><div class="line">        Swait(mx,<span class="number">1</span>,<span class="number">0</span>);<span class="comment">//起着开关作用，只要无writer进程进入写操作，mx=1,reader进程就可以进入读操作。但只要一旦有writer进程进入写操作时，其mx=0，则reader进程无法进入。</span></div><div class="line">        ...</div><div class="line">        perform read operation;</div><div class="line">        ...</div><div class="line">        Ssignal(L,<span class="number">1</span>);</div><div class="line">    &#125;<span class="keyword">while</span>(TRUE);</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">Writer</span><span class="params">()</span></span>&#123;</div><div class="line">    <span class="keyword">do</span>&#123;</div><div class="line">        Swait(mx,<span class="number">1</span>,<span class="number">1</span>;L,RN,<span class="number">0</span>);<span class="comment">//既无writer进程在写操作（mx=1）、又无reader进程在读操作（L=RN）,writer进程才能进入临界区进行写操作。</span></div><div class="line">        perform write operation;</div><div class="line">        Ssignal(mx,<span class="number">1</span>);</div><div class="line">    &#125;<span class="keyword">while</span>(TRUE)；</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">()</span></span>&#123;</div><div class="line">    <span class="function">cobegin </span></div><div class="line">        <span class="title">Reader</span><span class="params">()</span>;Writer();</div><div class="line">    coend</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="进程通信实现方式"><a href="#进程通信实现方式" class="headerlink" title="进程通信实现方式"></a>进程通信实现方式</h2><p>进程之间实现通信的机制在发展，由早期的低级进程通信机制-&gt;高级进程通信机制。归为四大类。</p>
+<h3 id="共享存储器系统"><a href="#共享存储器系统" class="headerlink" title="共享存储器系统"></a>共享存储器系统</h3><ol>
+<li>基于共享数据结构的通信方式：仅适于传递相对少量的数据，通信效率低下，属于低级通信。</li>
+<li>基于共享存储区的通信方式：需要通信的进程在通信前， 先向系统申请获得共享存储区中的一个分区，并将其附加到自己的地址空间中，对其中数据进行读写，完成或不再需要时，将其归还给共享存储区。属于高级通信。</li>
+</ol>
+<h3 id="管道通信系统"><a href="#管道通信系统" class="headerlink" title="管道通信系统"></a>管道通信系统</h3><ul>
+<li>指用于连接一个读进程和一个写进程以实现它们之间通信的一个共享文件，又名pipe文件。协调读进程和写进程之间的通信。</li>
+<li>FIFO ：命名管道，去除了管道只能在父子进程中使用的限制</li>
+</ul>
+<h3 id="消息队列"><a href="#消息队列" class="headerlink" title="消息队列"></a>消息队列</h3><p>进程不必借助任何共享存储区或数据结构，而是以格式化的消息为单位，将通信的数据封装在消息中，并利用操作系统提供的一组通信命令（原语），在进程间进行消息传递，完成进程间数据交换。</p>
+<h3 id="客户机-服务器系统"><a href="#客户机-服务器系统" class="headerlink" title="客户机-服务器系统"></a>客户机-服务器系统</h3><p>三类实现方法：套接字、远程过程调用和远程方法调用。</p>
+<ol>
+<li><p>套接字：包含了通信目的的地址、通信使用的端口号、通信网络的传输层协议、进程所在的网络地址、对客户或服务器程序提供的不同系统调用（或API函数）等。两种类型：基于文件型、基于网络型（常见）</p>
+</li>
+<li><p>远程过程调用和远程方法调用：在本地客户端和远程进程所在的服务器端都存在着存根。一般处于阻塞状态，等待消息。</p>
+<p>主要步骤：</p>
+<ol>
+<li>本地过程调用者–&gt;客户存根：调用，传递相应参数，给控制权</li>
+<li>客户存根执行，进行过程名和调用参数等信息的消息建立–&gt;本地客户进程：转移控制权</li>
+<li>本地客户进程–&gt;服务器：完成消息传递</li>
+<li>根据远程过程名找到对应的服务器存根，传递消息</li>
+<li>服务器存根由阻塞变执行，拆开消息取出过程调用参数，以一般方式调用服务器上关联的过程</li>
+<li>服务器端远程过程运行完毕，结果返回给与之关联的服务器存根</li>
+<li>存根打包结果为消息，控制权转给服务器进程</li>
+<li>远程服务器进程将消息发送回客户端</li>
+<li>根据过程名将消息存入关联的客户存根，控制权转给客户存根</li>
+<li>存根从消息中取出结果，返回给本地调用者进程，并转移控制权</li>
+</ol>
+</li>
+</ol>
+<h3 id="消息传递通信的实现方式"><a href="#消息传递通信的实现方式" class="headerlink" title="消息传递通信的实现方式"></a>消息传递通信的实现方式</h3><ol>
+<li>直接消息传递系统：发送进程利用OS所提供的发送命令（原语），直接把消息发送给目标进程。</li>
+<li>信箱通信</li>
+</ol>
+<h2 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h2><h3 id="线程基本概念"><a href="#线程基本概念" class="headerlink" title="线程基本概念"></a>线程基本概念</h3><p>OS中引入进程的目的是为了使多个程序能并发执行，以提高资源利用率和系统吞吐量。</p>
+<p>引入线程（将进程的两个属性【1、进程是一个可拥有资源的独立单位。2、进程是一个可独立调度和分派基本单位】分开，以线程作为调度和分派的基本单位）则是为了减少程序在并发执行时所付出的时空开销（由于进程是一个资源的拥有者，在创建、撤销和切换中，系统必须为之付出较大的时空开销），使OS具有更好的并发性。</p>
+<h3 id="线程与进程的比较"><a href="#线程与进程的比较" class="headerlink" title="线程与进程的比较"></a>线程与进程的比较</h3><ol>
+<li><p>线程所拥有的：</p>
+<ol>
+<li><p>用于控制线程运行的<strong>线程控制块TCB</strong></p>
+</li>
+<li><p>用于指示被执行指令序列的<strong>程序计数器</strong></p>
+</li>
+<li><p>保留局部变量</p>
+</li>
+<li><p>少数状态参数</p>
+</li>
+<li><p>返回地址</p>
+<p>等一组寄存器和堆栈</p>
+</li>
+</ol>
+</li>
+<li><p>线程可共享访问的：</p>
+<ol>
+<li>进程的<strong>内存地址空间和资源</strong></li>
+<li>其他线程的堆栈</li>
+<li>对其他线程的<strong>操作</strong></li>
+<li>对其他线程打开的<strong>文件</strong>进行操作</li>
+</ol>
+</li>
+<li><p>线程的高性能：</p>
+<ol>
+<li>创建速度快</li>
+<li>上下文切换快</li>
+<li>线程间的同步和通信比进程简单很多，有些切换、同步和通信操作都无需操作系统内核的干预</li>
+</ol>
+</li>
+<li><p>线程所拥有的处理机支持：</p>
+<ol>
+<li>可将一个进程中的多个线程分配到多个处理机上，使它们并行执行，速度更快</li>
+</ol>
+</li>
+<li><p>各方面的区别</p>
+<ol>
+<li><p>系统开销</p>
+<p>由于创建或撤销进程时，系统都要为之分配或回收资源，如内存空间、I/O 设备等，所付出的开销远大于创建或撤销线程时的开销。类似地，在进行进程切换时，涉及当前执行进程 CPU 环境的保存及新调度进程 CPU 环境的设置，而线程切换时只需保存和设置少量寄存器内容，开销很小。</p>
+</li>
+<li><p>通信方面</p>
+<p>线程间可以通过直接读写同一进程中的数据进行通信，但是进程通信需要借助 IPC</p>
+</li>
+</ol>
+</li>
+</ol>
+<h3 id="线程的线程控制块"><a href="#线程的线程控制块" class="headerlink" title="线程的线程控制块"></a>线程的线程控制块</h3><ol>
+<li>TCB:<ol>
+<li>线程标识符</li>
+<li>一组寄存器</li>
+<li>线程运行状态</li>
+<li>优先级</li>
+<li>线程专有存储区</li>
+<li>信号屏蔽</li>
+<li>堆栈指针：a.指向用户自己堆栈的指针、b.指向核心栈的指针</li>
+</ol>
+</li>
+<li>多进程OS中的进程属性：<ol>
+<li>进程是一个可拥有资源的基本单位，资源：用户的地址空间、实现进程（线程）间同步和通信的机制、已打开的文件和已申请到的I/O设备、一张由核心进程维护的地址映射表</li>
+<li>多个线程可并发执行</li>
+<li>进程已不是可执行的实体：多线程OS中，进程已不再是一个基本的可执行实体。但进程仍然具有与执行相关的状态。而且，对进程状态所施加的有关操作也对其线程起作用。挂起皆挂起，激活皆激活。</li>
+</ol>
+</li>
+</ol>
+<h3 id="线程的实现方式"><a href="#线程的实现方式" class="headerlink" title="线程的实现方式"></a>线程的实现方式</h3><ol>
+<li>内核支持线程 KST（Kernel Supported Threads）：创建、阻塞、撤销和切换等，都是在内核空间实现的。为了对内核线程进行控制和管理，在内核空间为每一个内核线程设置了一个线程控制块，内核根据该控制块感知某线程的存在，并对其加以控制。</li>
+<li>用户级线程 ULT：对线程的创建、撤销、同步与通信等功能，都无需内核的支持。</li>
+</ol>
+<h3 id="线程的实现"><a href="#线程的实现" class="headerlink" title="线程的实现"></a>线程的实现</h3><ol>
+<li><p>内核支持线程的实现：系统在创建一个新的进程时，便为它分配了一个任务数据区（内核空间当中）PTDA（Per Task Data Area），其中包括：若干个线程控制块TCB空间（线程标识符、优先级、线程运行的CPU状态等信息）每当进程要创建一个线程时，便为新线程分配一个TCB。</p>
+</li>
+<li><p>用户级线程的实现：</p>
+<ol>
+<li><p>运行时系统：是用于管理和控制线程的函数的集合</p>
+</li>
+<li><p>内核控制线程：轻型进程LWP</p>
+<p><img src="/tmp/1545464283948.png" alt="1545464283948"></p>
+</li>
+</ol>
+</li>
+</ol>
+<h3 id="线程的创建和终止"><a href="#线程的创建和终止" class="headerlink" title="线程的创建和终止"></a>线程的创建和终止</h3><ol>
+<li>创建：利用一个线程创建函数，提供相应参数：指向线程主程序的入口指针、堆栈的大小，以及用于调度的优先级等。在线程的创建函数执行完后，<strong>将返回一个线程标识符供以后使用</strong>。</li>
+<li>终止：终止线程通过调用相应的函数(或系统调用)对它执行终止操作。但有些线程(主要是系统线程)，它们一旦被建立起来之后，便一直运行下去而不被终止。在大多数的OS中，线程被中止后并不立即释放它所占有的资源，只有当进程中的其它线程执行了分离函数后，被终止的线程才与资源分离，此时的资源才能被其它线程利用。</li>
+</ol>
+<h2 id="练习题"><a href="#练习题" class="headerlink" title="练习题"></a>练习题</h2><h3 id="进程与程序的区别"><a href="#进程与程序的区别" class="headerlink" title="进程与程序的区别"></a>进程与程序的区别</h3><ol>
+<li>动态性：进程的实质是进程实体的执行过程，因此，动态性是进程最基本特征。进程”由创建而产生，由调度而执行，由撤销而消亡。“，进程实体有一定的生命周期，而程序只是一组有序指令的集合，并存放于某种介质上，其本身并不具有活动含义。</li>
+<li>并发性：引入进程后其能和其他进程实体并发执行。而程序是不能参与并发执行的。</li>
+<li>独立性：进程实体是一个能独立运行、独立获得资源和独立接受调度的基本单位。未建立PCB的程序都不能作为一个独立的单位参与运行。</li>
+</ol>
+<h2 id="处理机调度的层次与调度算法的目标"><a href="#处理机调度的层次与调度算法的目标" class="headerlink" title="处理机调度的层次与调度算法的目标"></a>处理机调度的层次与调度算法的目标</h2><h3 id="调度的层次"><a href="#调度的层次" class="headerlink" title="调度的层次"></a>调度的层次</h3><ol>
+<li>高级调度(High Level Scheduling)：<strong>作业调度</strong>或长程调度。调度对象是内存，将<strong>外存上处于后备队列</strong>中的一或几个作业调入内存，为它们创建进程、分配必要的资源，最后再将所创建的<strong>进程控制块</strong>插入就绪队列中。</li>
+<li>低级调度(Low Level Scheduling)：是距离硬件最近的一级调度。其主要任务是按照某种算法从就绪队列上选择一个（或多个）进程，使其获得CPU。也称<strong>进程调度或短程调度</strong>。</li>
+<li>中级调度(Intermediate Scheduling)：<strong>内存调度</strong>。为了提高内存利用率和系统吞吐量，对宝贵的内存资源进行了合理分配（将进程在内外存中互相调换），是<strong>存储器管理中的对换功能</strong></li>
+</ol>
+<h3 id="调度算法的目标"><a href="#调度算法的目标" class="headerlink" title="调度算法的目标"></a>调度算法的目标</h3><ol>
+<li>处理机调度算法的共同目标</li>
+<li>批处理系统的目标</li>
+<li>分时系统的目标</li>
+<li>实时系统的目标</li>
+</ol>
+<h2 id="作业与作业调度"><a href="#作业与作业调度" class="headerlink" title="作业与作业调度"></a>作业与作业调度</h2><h3 id="批处理系统中的作业"><a href="#批处理系统中的作业" class="headerlink" title="批处理系统中的作业"></a>批处理系统中的作业</h3><ol>
+<li>作业和作业步<ol>
+<li>作业：一个比程序更为广泛的概念。包含通常的程序和数据、作业说明书。</li>
+<li>作业步：作业中的每一个加工步骤。</li>
+</ol>
+</li>
+<li>作业控制块JCB：作业标识、用户名称、用户账号、作业类型（cpu繁忙型、I/O繁忙型、批量型、终端型）、作业状态、调度信息、资源需求、资源使用情况等。</li>
+<li>作业运行的三个阶段和三种状态：<ol>
+<li>收容阶段：后备状态</li>
+<li>运行阶段：运行状态</li>
+<li>完成阶段：完成状态</li>
+</ol>
+</li>
+</ol>
+<h3 id="作业调度的主要任务"><a href="#作业调度的主要任务" class="headerlink" title="作业调度的主要任务"></a>作业调度的主要任务</h3><ol>
+<li>接纳多少个作业</li>
+<li>接纳哪些作业</li>
+</ol>
+<h3 id="先来先服务（FCFS）和短作业优先（SJF）调度算法"><a href="#先来先服务（FCFS）和短作业优先（SJF）调度算法" class="headerlink" title="先来先服务（FCFS）和短作业优先（SJF）调度算法"></a>先来先服务（FCFS）和短作业优先（SJF）调度算法</h3><h3 id="先级调度算法-PSA-和高响应比优先调度算法-HRRN"><a href="#先级调度算法-PSA-和高响应比优先调度算法-HRRN" class="headerlink" title="先级调度算法(PSA)和高响应比优先调度算法(HRRN)"></a>先级调度算法(PSA)和高响应比优先调度算法(HRRN)</h3><ol>
+<li>HRRN:具有动态优先权：优先权=（等待时间+要求服务时间）/要求服务时间=响应时间/要求服务时间</li>
+<li>HRRN缺点：每次要进行调度之前，都需要先做响应比的计算，会增加系统开销。</li>
+</ol>
+<h2 id="进程调度"><a href="#进程调度" class="headerlink" title="进程调度"></a>进程调度</h2><h3 id="进程调度的任务、机制和方式"><a href="#进程调度的任务、机制和方式" class="headerlink" title="进程调度的任务、机制和方式"></a>进程调度的任务、机制和方式</h3><ol>
+<li><p>进程调度任务</p>
+<ol>
+<li>保存处理机的现场信息</li>
+<li>按某种算法选取进程</li>
+<li>把处理器分配给进程</li>
+</ol>
+</li>
+<li><p>进程调度机制</p>
+<ol>
+<li>排队器</li>
+<li>分派器</li>
+<li>上下文切换器</li>
+</ol>
+</li>
+<li><p>进程调度方式</p>
+<ol>
+<li>非抢占方式</li>
+<li>抢占方式</li>
+<li>抢占必须遵循的原则<ol>
+<li>优先权原则</li>
+<li>短进程优先原则</li>
+<li>时间片原则</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<h3 id="轮转调度算法（进程）"><a href="#轮转调度算法（进程）" class="headerlink" title="轮转调度算法（进程）"></a>轮转调度算法（进程）</h3><h3 id="优先级调度算法（进程）"><a href="#优先级调度算法（进程）" class="headerlink" title="优先级调度算法（进程）"></a>优先级调度算法（进程）</h3><ol>
+<li>优先级调度算法的类型：a.非抢占式b.抢占式</li>
+<li>优先级的类型：<ul>
+<li>静态优先级</li>
+<li>动态优先级</li>
+</ul>
+</li>
+</ol>
+<h3 id="多队列调度算法"><a href="#多队列调度算法" class="headerlink" title="多队列调度算法"></a>多队列调度算法</h3><h3 id="多级反馈队列调度算法"><a href="#多级反馈队列调度算法" class="headerlink" title="多级反馈队列调度算法"></a>多级反馈队列调度算法</h3><ol>
+<li>调度机制：a.设置多个不同优先级，执行时间片大小也不同的就绪队列。b.每个队列都采用FCFS算法。c.按队列优先级调度</li>
+<li>调度算法的性能：高</li>
+</ol>
+<h3 id="基于公平原则的调度算法"><a href="#基于公平原则的调度算法" class="headerlink" title="基于公平原则的调度算法"></a>基于公平原则的调度算法</h3><ol>
+<li>保证调度算法</li>
+<li>公平分享调度算法</li>
+</ol>
+<h2 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h2><h3 id="资源问题"><a href="#资源问题" class="headerlink" title="资源问题"></a>资源问题</h3><h3 id="处理方法"><a href="#处理方法" class="headerlink" title="处理方法"></a>处理方法</h3><ol>
+<li>鸵鸟策略</li>
+<li>死锁检测与死锁恢复</li>
+<li>死锁预防</li>
+<li>死锁避免</li>
+</ol>
+<h3 id="死锁检测与死锁恢复"><a href="#死锁检测与死锁恢复" class="headerlink" title="死锁检测与死锁恢复"></a>死锁检测与死锁恢复</h3><h3 id="死锁预防"><a href="#死锁预防" class="headerlink" title="死锁预防"></a>死锁预防</h3><p>在<strong>程序运行之前</strong>预防发生死锁</p>
+<ol>
+<li><p>破坏互斥条件</p>
+</li>
+<li><p>破坏占有和等待条件</p>
+<p>一种实现方式是规定所有进程在开始执行前请求所需要的全部资源</p>
+</li>
+<li><p>破坏不可抢占条件</p>
+</li>
+<li><p>破坏环路等待</p>
+<p>给资源统一编号，进程只能按编号顺序来请求资源</p>
+</li>
+</ol>
+<h3 id="死锁避免"><a href="#死锁避免" class="headerlink" title="死锁避免"></a>死锁避免</h3><p>在<strong>程序运行时</strong>避免发生死锁</p>
+<ul>
+<li>银行家算法</li>
+</ul>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/计算机基础/">计算机基础</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/操作系统/">操作系统</a>
+  </div>
+
+</div>
+
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2019/02/07/mysql/"  title="mysql">
+ <span>mysql
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+<div id="authorInfo">
+	
+		<div class="author-img"></div>		
+	
+	<div class="social-info" class="clearfix">
+		
+		
+		<a href="https://github.com/linkaiup" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://linkaiup.tumblr.com" target="_blank" class="icon-tumblr" title="Tumblr"></a>
+		
+		
+		<a href="mailto:876487322@qq.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+
+	</div>
+</div>
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Java-小记/" title="Java 小记">Java 小记<sup>6</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Netty/" title="Netty">Netty<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Web服务器/" title="Web服务器">Web服务器<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库/" title="数据库">数据库<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/生活随记/" title="生活随记">生活随记<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/计算机基础/" title="计算机基础">计算机基础<sup>2</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/文件IO/" title="文件IO">文件IO<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Java多线程/" title="Java多线程">Java多线程<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Java进阶/" title="Java进阶">Java进阶<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Web服务器/" title="Web服务器">Web服务器<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/网络/" title="网络">网络<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/life/" title="life">life<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mysql/" title="Mysql">Mysql<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/操作系统/" title="操作系统">操作系统<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Java/" title="Java">Java<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+<div id="footer" >
+		
+		
+
+		<p class="copyright">
+		<span id="busuanzi_container_site_pv" style='display:none'>
+                    本站总访问量为<span id="busuanzi_value_site_pv"></span>次
+   		</span>
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/hsihohuang/kiddochan" target="_blank" title="Kiddochan">Kiddochan</a> © 2019 
+		
+		<a href="/about" target="_blank" title="LinKai">LinKai</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
